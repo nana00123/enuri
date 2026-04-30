@@ -1,0 +1,281 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;}
+.wrap{display:flex;justify-content:center;padding:16px 0;}
+.phone{width:320px;background:#111;border-radius:40px;padding:10px;box-shadow:0 0 0 1px #333;}
+.notch-bar{height:28px;background:#111;border-radius:30px 30px 0 0;display:flex;align-items:center;justify-content:center;}
+.notch{width:80px;height:18px;background:#000;border-radius:10px;}
+.screen{width:100%;border-radius:30px;overflow:hidden;background:#f5f5f5;position:relative;}
+.slider{display:flex;transition:transform .35s cubic-bezier(.4,0,.2,1);width:200%;}
+.page{width:50%;background:#f5f5f5;flex-shrink:0;display:flex;flex-direction:column;}
+.home-btn{height:28px;background:#111;display:flex;align-items:center;justify-content:center;border-radius:0 0 30px 30px;margin-top:2px;}
+.home-bar{width:90px;height:4px;background:#444;border-radius:2px;}
+.scroll-area{flex:1;overflow-y:auto;background:#f5f5f5;}
+.scroll-area::-webkit-scrollbar{display:none;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-bottom:0.5px solid #eee;}
+.menu-icon{display:flex;flex-direction:column;gap:3px;}
+.menu-icon span{display:block;width:16px;height:1.5px;background:#333;border-radius:1px;}
+.logo-box{display:flex;align-items:center;gap:3px;}
+.logo-d{width:22px;height:22px;background:#ff6f0f;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+.topbar-title{font-size:13px;font-weight:600;color:#111;}
+.topbar-arrow{font-size:10px;color:#888;}
+.search-icon{width:18px;height:18px;border:1.5px solid #555;border-radius:50%;position:relative;}
+.search-icon::after{content:'';position:absolute;bottom:-4px;right:-3px;width:5px;height:1.5px;background:#555;transform:rotate(45deg);border-radius:1px;}
+.banner{display:flex;align-items:center;padding:10px 14px;background:#fff8f5;border-bottom:0.5px solid #ffdbc8;cursor:pointer;gap:10px;transition:background .15s;}
+.banner:active{background:#ffe8d6;}
+.ninja{width:32px;height:32px;background:#1a1a1a;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ninja-face{width:18px;height:18px;border-radius:50%;background:#fff;position:relative;overflow:hidden;}
+.ninja-eyes{position:absolute;top:6px;left:0;right:0;height:5px;background:#1a1a1a;}
+.banner-text{flex:1;}
+.banner-sub{font-size:11px;color:#666;}
+.banner-cta{font-size:12px;font-weight:700;color:#ff6f0f;}
+.arr{font-size:16px;color:#ccc;}
+.tabs{display:flex;overflow-x:auto;border-bottom:0.5px solid #eee;background:#fff;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:8px 11px;font-size:11px;white-space:nowrap;color:#888;border-bottom:2px solid transparent;flex-shrink:0;}
+.tab.on{color:#ff6f0f;border-bottom-color:#ff6f0f;font-weight:600;}
+.brands{padding:8px 14px;display:flex;gap:8px;align-items:center;border-bottom:0.5px solid #eee;background:#fff;}
+.blabel{font-size:10px;color:#555;font-weight:500;}
+.btag{font-size:10px;color:#333;}
+.frow{padding:7px 14px;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:0.5px solid #eee;}
+.fleft{font-size:10px;color:#888;display:flex;align-items:center;gap:3px;}
+.circ{width:10px;height:10px;border-radius:50%;border:1px solid #aaa;display:inline-block;}
+.fbtn{font-size:10px;color:#444;border:0.5px solid #ccc;border-radius:4px;padding:3px 8px;background:#fff;}
+.sort-row{padding:8px 14px;display:flex;align-items:center;justify-content:space-between;background:#fff;margin-top:6px;}
+.sort-left{font-size:10px;color:#555;}
+.sort-bold{font-weight:600;color:#111;}
+.sort-filters{display:flex;gap:6px;}
+.sort-chip{font-size:10px;color:#444;border:0.5px solid #ccc;border-radius:12px;padding:2px 8px;background:#fff;display:flex;align-items:center;gap:3px;}
+.chev{font-size:9px;color:#999;}
+.coupon-row{padding:7px 14px;display:flex;align-items:center;gap:8px;background:#fff;border-top:0.5px solid #eee;}
+.coupon-label{font-size:10px;color:#555;}
+.toggle{width:28px;height:16px;background:#ddd;border-radius:8px;position:relative;}
+.toggle-dot{width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;}
+.off-label{font-size:9px;color:#fff;position:absolute;right:3px;top:3px;font-weight:700;}
+.prods-label-row{padding:10px 14px 6px;background:#fff;margin-top:6px;}
+.prods-label{font-size:12px;font-weight:600;color:#111;}
+.mini-grid{padding:0 14px 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:#fff;}
+.pcard{}
+.pimg{width:100%;aspect-ratio:1;border-radius:8px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;position:relative;border:0.5px solid #eee;overflow:hidden;}
+.pimg-inner{font-size:26px;}
+.bdg{position:absolute;top:3px;left:3px;background:#ff6f0f;color:#fff;font-size:8px;border-radius:3px;padding:1px 3px;font-weight:700;}
+.pname{font-size:9px;color:#333;margin-top:3px;line-height:1.3;}
+.pprice{font-size:10px;font-weight:700;color:#111;margin-top:2px;}
+.pmeta{font-size:8px;color:#aaa;}
+.star{color:#ffa500;}
+.list-section{background:#fff;margin-top:6px;}
+.list-item{display:flex;gap:10px;padding:12px 14px;border-bottom:0.5px solid #f0f0f0;background:#fff;align-items:flex-start;}
+.item-img{width:80px;height:80px;border-radius:8px;background:#e8e8e8;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:0.5px solid #eee;}
+.item-img-icon{font-size:36px;}
+.item-badge{position:absolute;top:3px;left:3px;background:#ff6f0f;color:#fff;font-size:8px;border-radius:3px;padding:1px 4px;font-weight:700;}
+.item-info{flex:1;min-width:0;}
+.item-store-row{display:flex;align-items:center;gap:4px;margin-bottom:2px;}
+.item-store{font-size:10px;color:#888;}
+.item-npay{font-size:9px;background:#1ec400;color:#fff;padding:1px 4px;border-radius:3px;font-weight:600;}
+.item-ad{font-size:9px;color:#999;margin-left:auto;}
+.item-name{font-size:11px;color:#111;line-height:1.4;margin-bottom:4px;}
+.item-price{font-size:14px;font-weight:700;color:#111;margin-bottom:3px;}
+.item-rating{display:flex;align-items:center;gap:4px;font-size:10px;color:#888;}
+.bnav{display:flex;background:#fff;border-top:0.5px solid #eee;padding:6px 0 4px;flex-shrink:0;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.ni-label{font-size:8px;color:#aaa;}
+.ni-label.on{color:#ff6f0f;}
+.ico-home{width:16px;height:14px;border:1.5px solid #aaa;border-bottom:none;border-radius:3px 3px 0 0;position:relative;margin:0 auto;}
+.ico-home::after{content:'';position:absolute;bottom:-1px;left:-2px;right:-2px;height:1.5px;background:#aaa;}
+.ico-search{width:12px;height:12px;border:1.5px solid #aaa;border-radius:50%;position:relative;margin:2px auto 0;}
+.ico-search::after{content:'';position:absolute;bottom:-4px;right:-3px;width:4px;height:1.5px;background:#aaa;transform:rotate(45deg);border-radius:1px;}
+.ico-heart-nav{width:14px;height:12px;margin:2px auto 0;position:relative;}
+.ico-heart-nav::before,.ico-heart-nav::after{content:'';position:absolute;top:0;width:7px;height:8px;border-radius:7px 7px 0 0;background:#aaa;}
+.ico-heart-nav::before{left:0;transform-origin:right bottom;transform:rotate(-45deg);}
+.ico-heart-nav::after{right:0;transform-origin:left bottom;transform:rotate(45deg);}
+.notif{position:absolute;top:-2px;right:-2px;width:7px;height:7px;background:#ff6f0f;border-radius:50%;border:1px solid #fff;}
+.ico-person{width:12px;height:12px;border:1.5px solid #aaa;border-radius:50%;margin:2px auto 0;}
+.ico-clock{width:12px;height:12px;border:1.5px solid #aaa;border-radius:50%;margin:2px auto 0;position:relative;}
+.ico-clock::before{content:'';position:absolute;top:1px;left:4px;width:1px;height:4px;background:#aaa;}
+.ico-clock::after{content:'';position:absolute;top:4px;left:4px;width:3px;height:1px;background:#aaa;}
+.art-scroll{flex:1;overflow-y:auto;padding:16px;}
+.art-scroll::-webkit-scrollbar{display:none;}
+.art-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.back{width:28px;height:28px;border-radius:50%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#333;line-height:1;}
+.art-tag{font-size:11px;color:#ff6f0f;font-weight:600;}
+.art-title{font-size:18px;font-weight:700;color:#111;line-height:1.4;margin-bottom:12px;}
+.art-body p{font-size:12px;color:#333;line-height:1.75;margin-bottom:12px;}
+.hl{background:#fff8f5;border-left:3px solid #ff6f0f;border-radius:0 6px 6px 0;padding:8px 10px;margin:12px 0;}
+.hl p{margin-bottom:0;font-size:11px;color:#333;}
+.phone-num{font-weight:700;color:#ff6f0f;}
+.cta{margin-top:16px;background:#fff8f5;border:0.5px solid #ffd5b0;border-radius:12px;padding:14px;text-align:center;}
+.cta-plane{width:28px;height:28px;margin:0 auto 6px;position:relative;}
+.cta-plane::before{content:'';position:absolute;top:8px;left:0;right:0;height:12px;background:#ff6f0f;clip-path:polygon(0 50%,60% 0,100% 50%,60% 100%);}
+.cta-text{font-size:12px;font-weight:700;color:#222;line-height:1.6;}
+.cta-btn{display:inline-block;margin-top:10px;background:#ff6f0f;color:#fff;font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;cursor:pointer;}
+</style>
+
+<div class="wrap">
+  <div class="phone">
+    <div class="notch-bar"><div class="notch"></div></div>
+    <div class="screen">
+      <div class="slider" id="slider">
+
+        <div class="page">
+          <div class="scroll-area">
+            <div style="background:#fff;">
+              <div class="topbar">
+                <div class="menu-icon"><span></span><span></span><span></span></div>
+                <div class="logo-box">
+                  <div class="logo-d">d</div>
+                  <span class="topbar-title">캐리어/여행가방</span>
+                  <span class="topbar-arrow">∨</span>
+                </div>
+                <div class="search-icon"></div>
+              </div>
+              <div class="banner" id="banner">
+                <div class="ninja"><div class="ninja-face"><div class="ninja-eyes"></div></div></div>
+                <div class="banner-text">
+                  <div class="banner-sub">여행 중 소매치기, 보상받을까?</div>
+                  <div class="banner-cta">정답 확인하기</div>
+                </div>
+                <span class="arr">›</span>
+              </div>
+              <div class="tabs">
+                <div class="tab on">전체</div>
+                <div class="tab">기내용캐리어</div>
+                <div class="tab">중/대형캐리어</div>
+                <div class="tab">캐리어세트</div>
+              </div>
+              <div class="brands">
+                <span class="blabel">브랜드</span>
+                <span class="btag">아메리칸 투어리스터</span>
+                <span class="btag">쌤소나이트</span>
+              </div>
+              <div class="frow">
+                <div class="fleft"><span class="circ"></span> 인기 옵션 우선 노출</div>
+                <div class="fbtn">≡ 필터</div>
+              </div>
+            </div>
+
+            <div class="sort-row">
+              <div class="sort-left">총 <span class="sort-bold">31,910개</span></div>
+              <div class="sort-filters">
+                <div class="sort-chip">인기순 <span class="chev">∨</span></div>
+                <div class="sort-chip">배송비포함</div>
+                <div class="sort-chip">가격대검색 ›</div>
+              </div>
+            </div>
+            <div class="coupon-row">
+              <span class="coupon-label">쿠팡와우할인</span>
+              <div class="toggle"><div class="toggle-dot"></div><span class="off-label">OFF</span></div>
+            </div>
+
+            <div class="prods-label-row"><div class="prods-label">이런 상품 어때요?</div></div>
+            <div class="mini-grid">
+              <div class="pcard">
+                <div class="pimg" style="background:#e5e5e5;"><span class="pimg-inner">🧳</span><div class="bdg">구매 150+</div></div>
+                <div class="pname">[티아그 리오] 수하물 대형</div>
+                <div class="pprice">119,000원</div>
+                <div class="pmeta"><span class="star">★</span>4.83 (999+)</div>
+              </div>
+              <div class="pcard">
+                <div class="pimg" style="background:#e5e5e5;"><span class="pimg-inner">🧳</span><div class="bdg">구매 150+</div></div>
+                <div class="pname">[티아그 리오] 수하물 대형</div>
+                <div class="pprice">119,000원</div>
+                <div class="pmeta"><span class="star">★</span>4.83 (999+)</div>
+              </div>
+              <div class="pcard">
+                <div class="pimg" style="background:#f5f0e0;"><span class="pimg-inner">🟡</span><div class="bdg">구매 330+</div></div>
+                <div class="pname">로우로우 37L+72L 세트</div>
+                <div class="pprice">377,540원</div>
+                <div class="pmeta"><span class="star">★</span>4.91 (667)</div>
+              </div>
+            </div>
+
+            <div class="list-section">
+              <div class="list-item">
+                <div class="item-img" style="background:#d8d8d8;">
+                  <span class="item-img-icon">🧳</span>
+                  <div class="item-badge">구매 120+</div>
+                </div>
+                <div class="item-info">
+                  <div class="item-store-row">
+                    <span class="item-store">맨백 스토어</span>
+                    <span class="item-npay">Npay +</span>
+                    <span class="item-ad">광고</span>
+                  </div>
+                  <div class="item-name">[티아그 리오] 캐리어 일본 여행용 수하물 대형 대용량 91cm(36인치)</div>
+                  <div class="item-price">179,000원</div>
+                  <div class="item-rating"><span class="star">★</span> 4.83 (999+) · 무료배송</div>
+                </div>
+              </div>
+
+              <div class="list-item">
+                <div class="item-img" style="background:#ccc;">
+                  <span class="item-img-icon">🧳</span>
+                  <div class="item-badge">구매 290+</div>
+                </div>
+                <div class="item-info">
+                  <div class="item-store-row">
+                    <span class="item-store">맨백 스토어</span>
+                    <span class="item-npay">Npay +</span>
+                    <span class="item-ad">광고</span>
+                  </div>
+                  <div class="item-name">[티아그 리오] 캐리어 일본 여행용 수하물 대형 대용량 84cm(32인치)</div>
+                  <div class="item-price">159,000원</div>
+                  <div class="item-rating"><span class="star">★</span> 4.83 (999+) · 무료배송</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bnav">
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-home"></div></div><div class="ni-label">홈</div></div>
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-search"></div></div><div class="ni-label">검색</div></div>
+            <div class="ni"><div style="position:relative;display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-heart-nav"></div><div class="notif"></div></div><div class="ni-label on">구독</div></div>
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-person"></div></div><div class="ni-label">마이페이지</div></div>
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-clock"></div></div><div class="ni-label">최근본</div></div>
+          </div>
+        </div>
+
+        <div class="page">
+          <div class="art-scroll">
+            <div class="art-hdr">
+              <div class="back" id="back">‹</div>
+              <span class="art-tag">여행 꿀팁</span>
+            </div>
+            <div class="art-title">해외여행 중 소매치기당하면 어떻게 해야 할까?</div>
+            <div class="art-body">
+              <p>유럽이나 동남아처럼 관광객이 많은 곳에서는 소매치기 사건이 자주 발생해요. 특히 지하철, 시장, 관광지에서 주머니를 노리는 경우가 많아요.</p>
+              <div class="hl">
+                <p>외교부 콜센터 <span class="phone-num">+82-2-3210-0404</span>를 기억해 두면 좋아요. 현지 경찰 신고, 통역, 해외송금 지원을 받을 수 있어요.</p>
+              </div>
+              <p>도움을 받아 현지 경찰에 신고해도 범인을 잡기는 쉽지 않아요. 피해를 뒤늦게 인지하는 경우가 많아 범인 특정이 어렵거든요.</p>
+              <p>그래도 신고는 꼭 해야 해요. 여행자 보험 청구 시 도난신고서 등 입증 서류가 필요하고, 보통 100만 원까지 보상받을 수 있어요.</p>
+              <div class="cta">
+                <div class="cta-plane"></div>
+                <div class="cta-text">해외여행 계획 있다면<br>최대 3만원 돌려주는</div>
+                <div class="cta-btn">여행자 보험 보러가기</div>
+              </div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-home"></div></div><div class="ni-label">홈</div></div>
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-search"></div></div><div class="ni-label">검색</div></div>
+            <div class="ni"><div style="position:relative;display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-heart-nav"></div><div class="notif"></div></div><div class="ni-label on">구독</div></div>
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-person"></div></div><div class="ni-label">마이페이지</div></div>
+            <div class="ni"><div style="display:flex;align-items:flex-end;justify-content:center;height:18px;"><div class="ico-clock"></div></div><div class="ni-label">최근본</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="home-btn"><div class="home-bar"></div></div>
+  </div>
+</div>
+
+<script>
+const slider = document.getElementById('slider');
+document.getElementById('banner').addEventListener('click', () => {
+  slider.style.transform = 'translateX(-50%)';
+});
+document.getElementById('back').addEventListener('click', () => {
+  slider.style.transform = 'translateX(0)';
+});
+</script>
