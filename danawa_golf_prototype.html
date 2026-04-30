@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Danawa Golf Insurance Prototype</title>
+<style>
+  :root {
+    --green-dark: #1b5e20;
+    --green-mid: #2e7d32;
+    --green-light: #e8f5e9;
+    --green-border: #c8e6c9;
+    --amber: #b45309;
+    --amber-bg: #fff8e1;
+    --amber-border: #ffe082;
+    --blue: #1a4fa0;
+    --blue-light: #e8f0fe;
+    --red: #e63946;
+    --gray-bg: #f2f4f2;
+    --card-border: #e0e5e0;
+    --text-main: #1a1a1a;
+    --text-sub: #555;
+    --text-muted: #999;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: #e8eaed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    padding: 24px 16px;
+  }
+
+  .device-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── PHONE SHELL ── */
+  .phone {
+    width: 375px;
+    height: 780px;
+    border-radius: 48px;
+    background: #111;
+    padding: 12px;
+    position: relative;
+    box-shadow:
+      0 0 0 1px #333,
+      0 30px 80px rgba(0,0,0,0.45),
+      0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .phone-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 38px;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Notch */
+  .notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 126px; height: 34px;
+    background: #111;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #fff;
+    transition: opacity 0.28s cubic-bezier(.4,0,.2,1), transform 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(24px);
+  }
+  .screen.slide-left {
+    transform: translateX(-24px);
+  }
+
+  /* ── STATUS BAR ── */
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 44px 20px 6px;
+    background: inherit;
+    position: relative;
+    z-index: 10;
+  }
+  .status-time { font-size: 15px; font-weight: 600; color: var(--text-main); }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .sig-bars { display: flex; gap: 2px; align-items: flex-end; }
+  .sig-bars span { width: 3px; background: var(--text-main); border-radius: 1px; }
+  .sig-bars span:nth-child(1) { height: 4px; }
+  .sig-bars span:nth-child(2) { height: 7px; }
+  .sig-bars span:nth-child(3) { height: 10px; }
+  .sig-bars span:nth-child(4) { height: 13px; }
+  .wifi-icon { width: 16px; height: 12px; position: relative; }
+  .wifi-icon::before, .wifi-icon::after { content: ''; position: absolute; border-radius: 50%; border: 2px solid var(--text-main); }
+  .wifi-icon::before { width: 16px; height: 16px; top: -4px; left: 0; clip-path: inset(0 0 50% 0); }
+  .wifi-icon::after { width: 8px; height: 8px; top: 0; left: 4px; clip-path: inset(0 0 50% 0); }
+  .bat-wrap { display: flex; align-items: center; gap: 2px; }
+  .bat-body { width: 22px; height: 11px; border: 1.5px solid var(--text-main); border-radius: 3px; position: relative; padding: 1.5px; }
+  .bat-body::after { content: ''; position: absolute; right: -4px; top: 50%; transform: translateY(-50%); width: 2px; height: 5px; background: var(--text-main); border-radius: 0 1px 1px 0; }
+  .bat-fill { height: 100%; width: 80%; background: var(--text-main); border-radius: 1px; }
+  .bat-pct { font-size: 11px; font-weight: 600; color: var(--text-main); }
+
+  /* ── HOME ── */
+  #s-home { background: #fff; }
+
+  .home-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 18px 10px;
+    border-bottom: 0.5px solid #eee;
+  }
+  .home-logo { height: 28px; width: auto; display: block; }
+  .header-icons { display: flex; gap: 14px; }
+  .header-icons svg { width: 20px; height: 20px; stroke: #444; fill: none; stroke-width: 1.8; }
+
+  .search-box {
+    margin: 10px 16px;
+    background: #f3f5f9;
+    border-radius: 22px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .search-box:active { background: #e8eaf0; border-color: var(--blue); }
+  .search-box svg { width: 16px; height: 16px; stroke: #888; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .search-placeholder { font-size: 13px; color: #999; flex: 1; }
+
+  .home-banner {
+    margin: 4px 16px;
+    border-radius: 14px;
+    background: var(--blue);
+    padding: 12px 16px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .home-banner:active { opacity: 0.88; }
+  .home-banner h3 { font-size: 10px; font-weight: 400; opacity: 0.8; margin-bottom: 3px; }
+  .home-banner p { font-size: 13px; font-weight: 700; line-height: 1.4; }
+  .home-banner-btn { background: rgba(255,255,255,0.2); border-radius: 8px; padding: 5px 10px; font-size: 11px; white-space: nowrap; }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 6px 10px;
+    gap: 0;
+  }
+  .cat-item {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 7px 2px; cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.1s;
+  }
+  .cat-item:active { background: #f0f2f8; }
+  .cat-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .cat-label { font-size: 9px; color: #555; text-align: center; line-height: 1.3; }
+
+  .section-hd { font-size: 13px; font-weight: 700; color: var(--text-main); padding: 4px 16px 6px; }
+  .section-hd span { font-size: 10px; font-weight: 400; color: var(--text-muted); margin-left: 4px; }
+
+  .product-scroll { display: flex; gap: 12px; padding: 0 16px 4px; overflow-x: auto; scrollbar-width: none; }
+  .product-scroll::-webkit-scrollbar { display: none; }
+  .product-card { min-width: 88px; flex-shrink: 0; cursor: pointer; }
+  .product-img-box {
+    width: 88px; height: 78px; border-radius: 10px;
+    background: #f5f5f5; border: 0.5px solid #eee;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    transition: transform 0.1s;
+  }
+  .product-card:active .product-img-box { transform: scale(0.96); }
+  .product-name { font-size: 10px; color: #333; margin-top: 5px; line-height: 1.3; }
+  .product-price { font-size: 10px; font-weight: 700; color: var(--red); margin-top: 2px; }
+
+  .bottom-nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; background: #fff;
+    border-top: 0.5px solid #e8e8e8;
+    padding: 8px 0 22px;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    font-size: 9px; color: #999; cursor: pointer;
+    transition: color 0.1s;
+    position: relative;
+  }
+  .nav-item.active { color: var(--blue); }
+  .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  .nav-badge {
+    position: absolute; top: 0; right: calc(50% - 18px);
+    background: var(--red); color: #fff;
+    font-size: 8px; font-weight: 700;
+    width: 14px; height: 14px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── SEARCH SCREEN ── */
+  #s-search { background: #fff; }
+
+  .search-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 44px 14px 10px;
+    border-bottom: 0.5px solid #eee;
+    background: #fff;
+    position: relative; z-index: 10;
+  }
+  .back-btn {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 50%; transition: background 0.1s; flex-shrink: 0;
+  }
+  .back-btn:active { background: #f0f0f0; }
+  .back-btn svg { width: 20px; height: 20px; stroke: #333; fill: none; stroke-width: 2; }
+
+  .search-input-wrap {
+    flex: 1; display: flex; align-items: center;
+    background: #f3f5f9; border-radius: 20px; padding: 8px 14px; gap: 8px;
+    border: 1.5px solid transparent; transition: border-color 0.15s;
+  }
+  .search-input-wrap.focused { border-color: var(--blue); background: #fff; }
+  .search-input-wrap svg { width: 15px; height: 15px; stroke: #aaa; fill: none; stroke-width: 2; flex-shrink: 0; }
+  #search-text {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 14px; color: var(--text-main); font-family: inherit; min-width: 0;
+  }
+  .clear-btn {
+    width: 18px; height: 18px; background: #ccc; border-radius: 50%;
+    display: none; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+  }
+  .clear-btn svg { width: 10px; height: 10px; stroke: #fff; fill: none; stroke-width: 2.5; }
+
+  .search-cancel {
+    font-size: 13px; color: var(--blue); cursor: pointer; white-space: nowrap; flex-shrink: 0; padding: 4px;
+  }
+  .search-cancel:active { opacity: 0.6; }
+
+  /* Golf banner in search */
+  .golf-banner {
+    margin: 10px 14px;
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    display: none;
+    transition: transform 0.1s, box-shadow 0.1s;
+    animation: bannerIn 0.3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .golf-banner:active { transform: scale(0.98); }
+  @keyframes bannerIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .golf-banner-inner { display: flex; justify-content: space-between; align-items: center; }
+  .golf-banner h3 { font-size: 13px; font-weight: 700; color: var(--amber); }
+  .golf-banner p { font-size: 11px; color: #78350f; margin-top: 3px; }
+  .golf-banner-arrow {
+    width: 28px; height: 28px; background: var(--amber); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .golf-banner-arrow svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.5; }
+
+  .suggestion-list { overflow-y: auto; }
+  .suggestion-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; cursor: pointer; transition: background 0.1s;
+    border-bottom: 0.5px solid #f5f5f5;
+  }
+  .suggestion-item:active { background: #f8f8f8; }
+  .si-left { display: flex; align-items: center; gap: 12px; }
+  .si-ico {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #f5f5f5; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .si-ico svg { width: 14px; height: 14px; stroke: #aaa; fill: none; stroke-width: 1.8; }
+  .si-text { font-size: 13px; color: #333; }
+  .si-text em { color: var(--blue); font-style: normal; font-weight: 500; }
+  .si-sub { font-size: 11px; color: #999; margin-top: 1px; }
+  .si-arrow svg { width: 14px; height: 14px; stroke: #ccc; fill: none; stroke-width: 2; }
+
+  /* ── INFO SCREEN ── */
+  #s-info { background: var(--gray-bg); }
+  .info-scroll { height: 100%; overflow-y: auto; scrollbar-width: none; }
+  .info-scroll::-webkit-scrollbar { display: none; }
+
+  .info-hero {
+    background: linear-gradient(170deg, #c8e6c9, #a5d6a7);
+    padding: 54px 20px 24px;
+    text-align: center;
+    position: relative;
+  }
+  .info-back-btn {
+    position: absolute;
+    top: 50px; left: 12px;
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,0.62);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .info-back-btn:active { background: rgba(255,255,255,0.9); }
+  .info-back-btn svg { width: 18px; height: 18px; stroke: #1b5e20; fill: none; stroke-width: 2.5; }
+  .hero-emoji { font-size: 48px; margin-bottom: 14px; display: block; }
+  .hero-title {
+    font-size: 17px; font-weight: 800; color: var(--green-dark);
+    line-height: 1.55;
+  }
+
+  .info-body { padding: 14px 14px 28px; }
+
+  .info-card {
+    background: #fff; border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 10px;
+    border: 0.5px solid var(--card-border);
+  }
+  .card-title {
+    font-size: 13px; font-weight: 700; color: var(--green-mid);
+    margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--green-border);
+  }
+
+  .risk-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+  .risk-row:last-child { margin-bottom: 0; }
+  .risk-icon-box {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .risk-icon-box.green { background: #e8f5e9; }
+  .risk-icon-box.amber { background: #fff8e1; }
+  .risk-icon-box.blue { background: #e3f2fd; }
+  .risk-txt h4 { font-size: 12px; font-weight: 700; color: var(--text-main); }
+  .risk-txt p { font-size: 11px; color: var(--text-sub); line-height: 1.5; margin-top: 2px; }
+
+  .cov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cov-item {
+    background: var(--green-light); border-left: 3px solid #66bb6a;
+    padding: 9px 11px;
+  }
+  .cov-name { font-size: 10px; font-weight: 700; color: var(--green-mid); }
+  .cov-desc { font-size: 9px; color: var(--text-sub); margin-top: 3px; line-height: 1.4; }
+
+  .tip-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 0.5px solid #f0f0f0;
+  }
+  .tip-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .tip-badge {
+    width: 32px; height: 32px; border-radius: 10px; background: var(--green-light);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .tip-txt h4 { font-size: 12px; font-weight: 700; color: var(--text-main); }
+  .tip-txt p { font-size: 10px; color: var(--text-sub); line-height: 1.5; margin-top: 2px; }
+
+  .info-footer {
+    text-align: center; padding: 4px 16px 32px;
+    font-size: 10px; color: #aaa; line-height: 1.6;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-wrap {
+    padding: 20px 16px 12px;
+    background: transparent;
+  }
+  .cta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 15px 20px;
+    background: var(--green-mid);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cta-btn:active {
+    background: #1b5e20;
+    transform: scale(0.98);
+  }
+  .cta-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .cta-btn svg {
+    width: 18px; height: 18px;
+    stroke: #fff; fill: none; stroke-width: 2.2;
+    flex-shrink: 0;
+  }
+  .cta-sub {
+    text-align: center;
+    font-size: 10px;
+    color: #aaa;
+    padding: 6px 16px 20px;
+  }
+
+  /* ── CURSOR BLINK ── */
+  .cursor::after {
+    content: '|'; color: var(--blue);
+    animation: blink 0.75s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+
+<div class="device-label">Danawa · 골프보험 안내 Prototype</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="phone-inner">
+
+    <!-- ════════════ SCREEN: HOME ════════════ -->
+    <div class="screen" id="s-home">
+      <div class="status">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <div class="sig-bars">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="wifi-icon"></div>
+          <div class="bat-wrap">
+            <div class="bat-body"><div class="bat-fill"></div></div>
+            <span class="bat-pct">80%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-header">
+        <img class="home-logo" id="logo-home" alt="danawa" />
+        <div class="header-icons">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+      </div>
+
+      <div class="search-box" onclick="goSearch()">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="search-placeholder">비교하고 잘 사는 다나와</span>
+      </div>
+
+      <div class="home-banner">
+        <div>
+          <h3>1,000개 넘는 데이터 증명</h3>
+          <p>브랜드 대신 성분으로<br>저탄고단 즉석밥 TOP5</p>
+        </div>
+        <div class="home-banner-btn">보기 →</div>
+      </div>
+
+      <div class="category-grid">
+        <div class="cat-item"><div class="cat-icon" style="background:#e8f4fd;">📺</div><div class="cat-label">가전TV</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#f0f4ff;">💻</div><div class="cat-label">컴퓨터노트북</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#fef3e2;">📱</div><div class="cat-label">태블릿모바일</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#e8f5e9;">⛳</div><div class="cat-label">스포츠골프</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#fce4ec;">🚗</div><div class="cat-label">자동차용품</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#f3e5f5;">🛋️</div><div class="cat-label">가구조명</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#e8f5e9;">🍱</div><div class="cat-label">식품유아완구</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#fff8e1;">🧹</div><div class="cat-label">생활주방건강</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#fce4ec;">👜</div><div class="cat-label">패션잡화뷰티</div></div>
+        <div class="cat-item"><div class="cat-icon" style="background:#e3f2fd;">🐶</div><div class="cat-label">반려동물취미</div></div>
+      </div>
+
+      <div class="section-hd">오늘 봐야 할 추천 상품 <span>광고</span></div>
+      <div class="product-scroll">
+        <div class="product-card"><div class="product-img-box">🍳</div><div class="product-name">오쿠 OC-M2000P 레드 140개</div><div class="product-price">266,850원</div></div>
+        <div class="product-card"><div class="product-img-box">🍳</div><div class="product-name">오쿠 슬림 마스터 쿠커 레드</div><div class="product-price">350,000원</div></div>
+        <div class="product-card"><div class="product-img-box">📦</div><div class="product-name">오쿠 대용량 건조 식품처리기</div><div class="product-price">270,000원</div></div>
+        <div class="product-card"><div class="product-img-box">🔌</div><div class="product-name">엔유씨 슬로우쿠커</div><div class="product-price">60,000원</div></div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          홈
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          검색
+        </div>
+        <div class="nav-item" style="position:relative;">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="nav-badge">무료</div>
+          구독
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          마이페이지
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          최근본
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════ SCREEN: SEARCH ════════════ -->
+    <div class="screen hidden" id="s-search">
+      <div class="search-header">
+        <div class="back-btn" onclick="goHome()">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div class="search-input-wrap focused">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div id="search-text"></div>
+          <div class="clear-btn" id="clear-btn" onclick="clearSearch()">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+        </div>
+        <div class="search-cancel" onclick="goHome()">취소</div>
+      </div>
+
+      <div class="golf-banner" id="golf-banner" onclick="goInfo()">
+        <div class="golf-banner-inner">
+          <div>
+            <h3>라운딩 중 발생할 수 있는 위험,</h3>
+            <p>얼마나 알고 계신가요?</p>
+          </div>
+          <div class="golf-banner-arrow">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="suggestion-list" id="suggestion-list">
+        <div style="padding:20px 18px;font-size:13px;color:#bbb;text-align:center;">검색어를 입력해보세요</div>
+      </div>
+    </div>
+
+    <!-- ════════════ SCREEN: INFO ════════════ -->
+    <div class="screen hidden" id="s-info">
+      <div class="info-scroll">
+        <div class="info-hero">
+          <div class="info-back-btn" onclick="goSearch()">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          </div>
+          <span class="hero-emoji">⛳🏌️</span>
+          <div class="hero-title">라운딩 중 발생할 수 있는 위험,<br>얼마나 알고 계신가요?</div>
+        </div>
+
+        <div class="info-body">
+
+          <div class="info-card">
+            <div class="card-title">골프 중 발생할 수 있는 주요 위험</div>
+            <div class="risk-row">
+              <div class="risk-icon-box green">🏌️</div>
+              <div class="risk-txt">
+                <h4>타인 부상 및 배상책임</h4>
+                <p>타인 부상이 발생했을 때 이상 상태·손해에 대한 합리적 배상 보장</p>
+              </div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-icon-box amber">🎒</div>
+              <div class="risk-txt">
+                <h4>골프용품 손해 및 파손</h4>
+                <p>골프용품 손해 및 파손으로 인한 손실을 보상</p>
+              </div>
+            </div>
+            <div class="risk-row">
+              <div class="risk-icon-box blue">🩺</div>
+              <div class="risk-txt">
+                <h4>본인 상해 위험</h4>
+                <p>라운딩 중 본인에게 발생한 상해 치료비 보장</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-title">골프보험으로 대비할 수 있는 내용</div>
+            <div class="cov-grid">
+              <div class="cov-item"><div class="cov-name">배상책임 보장</div><div class="cov-desc">타인에 대한 배상책임 보장</div></div>
+              <div class="cov-item"><div class="cov-name">용품 손해 보장</div><div class="cov-desc">골프용품 파손·손해 보장</div></div>
+              <div class="cov-item"><div class="cov-name">상해 사망 및 후유장해</div><div class="cov-desc">사망 및 후유장해 보장</div></div>
+              <div class="cov-item"><div class="cov-name">홀인원 축하 비용</div><div class="cov-desc">홀인원 축하 비용 보장</div></div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-title">알아두면 유익한 골프 상식 &amp; 팁</div>
+            <div class="tip-row">
+              <div class="tip-badge">📋</div>
+              <div class="tip-txt">
+                <h4>라운딩 전 체크리스트</h4>
+                <p>라운딩 전 안전 수칙 및 준비물 체크리스트를 꼼꼼히 확인하세요.</p>
+              </div>
+            </div>
+            <div class="tip-row">
+              <div class="tip-badge">🛡️</div>
+              <div class="tip-txt">
+                <h4>안전 수칙 준수</h4>
+                <p>안전 수칙을 반드시 준수하여 사고를 예방하세요.</p>
+              </div>
+            </div>
+            <div class="tip-row">
+              <div class="tip-badge">⛳</div>
+              <div class="tip-txt">
+                <h4>홀인원 달성 시 유의사항</h4>
+                <p>홀인원 달성 시 보험 청구 절차와 필요 서류를 미리 알아두세요.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-wrap">
+          <button class="cta-btn" onclick="void(0)">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            자세히 알아보기
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="cta-sub">제공: 골프 정보 라운지 · 본 화면은 정보 제공 목적으로 제작되었습니다.</div>
+      </div>
+    </div>
+
+  </div><!-- phone-inner -->
+</div><!-- phone -->
+
+<script>
+const LOGO = "data:image/jpeg;base64,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";
+
+document.getElementById('logo-home').src = LOGO;
+
+const suggestions = [
+  { text: '파크', em: '골프채', sub: '파크골프 › 파크 클럽' },
+  { text: '중고파크', em: '골프채', sub: '' },
+  { text: '여성용 ', em: '골프채', sub: '풀세트' },
+  { text: '남성 ', em: '골프채', sub: '풀세트' },
+  { text: '', em: '골프채', sub: '' },
+  { text: '캘러웨이 ', em: '골프채', sub: '풀세트' },
+  { text: '루키루키 카본파이버 파크', em: '골프채', sub: '' },
+  { text: '피닉스 파크', em: '골프채', sub: '' },
+];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    if (s.id === id) {
+      s.classList.remove('hidden');
+    } else {
+      s.classList.add('hidden');
+    }
+  });
+}
+
+function renderSuggestions() {
+  document.getElementById('suggestion-list').innerHTML = suggestions.map(s => `
+    <div class="suggestion-item">
+      <div class="si-left">
+        <div class="si-ico">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div>
+          <div class="si-text">${s.text}<em>${s.em}</em>${s.sub ? ' ' + s.sub : ''}</div>
+          ${s.sub ? '' : ''}
+        </div>
+      </div>
+      <div class="si-arrow">
+        <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.goHome = function() {
+  show('s-home');
+  resetSearch();
+};
+
+window.goSearch = function() {
+  show('s-search');
+  document.getElementById('search-text').textContent = '';
+  document.getElementById('search-text').classList.remove('cursor');
+  document.getElementById('golf-banner').style.display = 'none';
+  document.getElementById('clear-btn').style.display = 'none';
+  document.getElementById('suggestion-list').innerHTML =
+    '<div style="padding:20px 18px;font-size:13px;color:#bbb;text-align:center;">검색어를 입력해보세요</div>';
+
+  setTimeout(() => {
+    startTyping();
+  }, 400);
+};
+
+window.goInfo = function() {
+  show('s-info');
+  document.querySelector('#s-info .info-scroll').scrollTop = 0;
+};
+
+window.clearSearch = function() {
+  document.getElementById('search-text').textContent = '';
+  document.getElementById('golf-banner').style.display = 'none';
+  document.getElementById('clear-btn').style.display = 'none';
+  document.getElementById('suggestion-list').innerHTML =
+    '<div style="padding:20px 18px;font-size:13px;color:#bbb;text-align:center;">검색어를 입력해보세요</div>';
+};
+
+function resetSearch() {
+  clearInterval(typingTimer);
+  document.getElementById('search-text').textContent = '';
+  document.getElementById('search-text').classList.remove('cursor');
+  document.getElementById('golf-banner').style.display = 'none';
+  document.getElementById('clear-btn').style.display = 'none';
+}
+
+let typingTimer;
+function startTyping() {
+  const el = document.getElementById('search-text');
+  const word = '골프클럽';
+  let i = 0;
+  el.textContent = '';
+  el.classList.add('cursor');
+  clearInterval(typingTimer);
+  typingTimer = setInterval(() => {
+    if (i <= word.length) {
+      el.textContent = word.slice(0, i);
+      i++;
+      if (i > 1) {
+        renderSuggestions();
+        document.getElementById('clear-btn').style.display = 'flex';
+      }
+      if (i > word.length) {
+        clearInterval(typingTimer);
+        el.classList.remove('cursor');
+        document.getElementById('golf-banner').style.display = 'block';
+      }
+    }
+  }, 140);
+}
+
+show('s-home');
+</script>
+</body>
+</html>
