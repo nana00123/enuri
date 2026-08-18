@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRD 리뷰 — 쇼핑지식 활동점수·e머니 지급 종료 V0.1</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --brand:#1a70dd;
+    --ink:#1f2733;
+    --sub:#5b6675;
+    --line:#e3e8ef;
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --crit:#ee2c40;
+    --crit-bg:#fdf0f2;
+    --high:#e8720c;
+    --high-bg:#fef4ea;
+    --med:#b58900;
+    --med-bg:#fdf8e7;
+    --done:#1a9a55;
+    --done-bg:#ecf8f1;
+    --flag:#7a4fd0;
+    --flag-bg:#f4effd;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);
+    font-size:15px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 32px 96px;}
+
+  /* ===== Header ===== */
+  .doc-head{border-bottom:3px solid var(--ink);padding-bottom:28px;margin-bottom:36px;}
+  .doc-eyebrow{display:inline-block;background:var(--ink);color:#fff;font-size:12px;font-weight:700;letter-spacing:.08em;padding:4px 10px;border-radius:3px;margin-bottom:14px;}
+  .doc-title{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.3;}
+  .doc-title small{display:block;font-size:16px;font-weight:600;color:var(--brand);margin-top:6px;}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 24px;margin-top:20px;font-size:13.5px;}
+  .meta dt{color:var(--sub);font-weight:600;font-size:12px;letter-spacing:.03em;}
+  .meta dd{font-weight:600;margin-top:2px;}
+
+  /* ===== Summary ===== */
+  .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .sum-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;border-top:4px solid var(--line);}
+  .sum-card .n{font-size:32px;font-weight:800;line-height:1.1;}
+  .sum-card .l{font-size:13px;color:var(--sub);font-weight:600;margin-top:2px;}
+  .sum-card .d{font-size:12px;color:var(--sub);margin-top:6px;}
+  .sum-crit{border-top-color:var(--crit);}  .sum-crit .n{color:var(--crit);}
+  .sum-high{border-top-color:var(--high);}  .sum-high .n{color:var(--high);}
+  .sum-med{border-top-color:var(--med);}   .sum-med .n{color:var(--med);}
+  .sum-done{border-top-color:var(--done);} .sum-done .n{color:var(--done);}
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:8px;padding:16px 20px;font-size:14px;margin-bottom:44px;}
+  .verdict b{color:var(--brand);}
+
+  /* ===== Section ===== */
+  .sec{margin-bottom:52px;}
+  .sec-title{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px;}
+  .sec-title .bar{width:6px;height:24px;border-radius:3px;background:var(--brand);}
+  .sec-title.t-crit .bar{background:var(--crit);}
+  .sec-title.t-high .bar{background:var(--high);}
+  .sec-title.t-med .bar{background:var(--med);}
+  .sec-title.t-done .bar{background:var(--done);}
+  .sec-desc{color:var(--sub);font-size:13.5px;margin-bottom:20px;}
+
+  /* ===== Issue card ===== */
+  .issue{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:16px;overflow:hidden;}
+  .issue-head{display:flex;align-items:flex-start;gap:12px;padding:16px 20px 12px;}
+  .badge{flex:none;font-size:12px;font-weight:800;padding:3px 9px;border-radius:4px;letter-spacing:.02em;margin-top:2px;}
+  .b-crit{background:var(--crit);color:#fff;}
+  .b-high{background:var(--high);color:#fff;}
+  .b-med{background:var(--med);color:#fff;}
+  .b-done{background:var(--done);color:#fff;}
+  .b-partial{background:#fff;color:var(--crit);border:1.5px solid var(--crit);}
+  .issue-title{font-size:16px;font-weight:800;line-height:1.45;}
+  .issue-title .ref{font-size:12px;font-weight:600;color:var(--sub);margin-left:8px;}
+  .issue-body{padding:0 20px 18px 20px;}
+  .issue-body p{margin-bottom:10px;font-size:14px;}
+  .issue-body p:last-child{margin-bottom:0;}
+  .lbl{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.05em;color:var(--sub);border:1px solid var(--line);border-radius:3px;padding:1px 7px;margin:8px 0 6px;background:#fafbfd;}
+  .lbl.action{color:var(--brand);border-color:#c4d9f5;background:#eef5fd;}
+  .lbl.risk{color:var(--crit);border-color:#f6c6cd;background:var(--crit-bg);}
+  .quotebox{background:#fafbfd;border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-size:13.5px;color:var(--sub);margin:8px 0;}
+  .quotebox b{color:var(--ink);}
+  ul.pts{margin:6px 0 10px 2px;list-style:none;}
+  ul.pts li{position:relative;padding-left:16px;margin-bottom:6px;font-size:14px;}
+  ul.pts li::before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--brand);}
+  ol.steps{margin:6px 0 10px 20px;}
+  ol.steps li{margin-bottom:6px;font-size:14px;}
+  .flag{display:inline-block;font-size:12px;font-weight:800;color:var(--flag);background:var(--flag-bg);border:1px solid #ddceF6;border-radius:4px;padding:2px 8px;margin-top:6px;}
+
+  /* ===== Tables ===== */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13.5px;}
+  .tbl-wrap{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);}
+  .tbl-wrap table{border:none;border-radius:0;}
+  th{background:#f0f4f9;text-align:left;font-weight:700;padding:11px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--sub);letter-spacing:.02em;}
+  td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td .id{font-weight:800;color:var(--med);white-space:nowrap;}
+  table.mini{margin:8px 0;font-size:13px;}
+  table.mini th{padding:8px 12px;}
+  table.mini td{padding:8px 12px;}
+
+  /* pattern comparison */
+  .pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0;}
+  .pattern{border:1px solid var(--line);border-radius:8px;padding:14px 16px;background:#fafbfd;}
+  .pattern.ok{border-color:#bfe3cd;background:var(--done-bg);}
+  .pattern.bad{border-color:#f6c6cd;background:var(--crit-bg);}
+  .pattern h4{font-size:13.5px;font-weight:800;margin-bottom:6px;}
+  .pattern.ok h4{color:var(--done);}
+  .pattern.bad h4{color:var(--crit);}
+  .pattern code{display:block;background:#fff;border:1px solid var(--line);border-radius:5px;padding:8px 10px;font-size:12px;font-family:'SF Mono',Consolas,monospace;margin:6px 0;color:var(--ink);}
+  .pattern p{font-size:13px;margin:0;}
+
+  /* resolved cards */
+  .done-item{background:var(--done-bg);border:1px solid #bfe3cd;border-radius:8px;padding:14px 18px;margin-bottom:10px;font-size:14px;}
+  .done-item b{color:var(--done);}
+
+  /* ask list */
+  .ask{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--crit);border-radius:8px;padding:14px 18px;margin-bottom:10px;font-size:14px;}
+  .ask .q{font-weight:800;}
+  .ask .a{color:var(--sub);font-size:13.5px;margin-top:4px;}
+
+  .footer-note{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:var(--sub);font-size:12.5px;}
+
+  @media print{
+    body{background:#fff;}
+    .wrap{padding:0;}
+    .issue,.sum-card,.tbl-wrap,table{break-inside:avoid;}
+  }
+  @media (max-width:760px){
+    .summary{grid-template-columns:repeat(2,1fr);}
+    .pattern-grid{grid-template-columns:1fr;}
+    .wrap{padding:28px 18px 64px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HEADER ============ -->
+  <header class="doc-head">
+    <span class="doc-eyebrow">PRD REVIEW</span>
+    <h1 class="doc-title">쇼핑지식 서비스 종료 — 활동점수 및 e머니 지급 종료
+      <small>리뷰 코멘트 · 심각도별 정리</small>
+    </h1>
+    <dl class="meta">
+      <div><dt>대상 문서</dt><dd>활동점수 및 e머니 지급 종료 V0.1 (260813)</dd></div>
+      <div><dt>리뷰어</dt><dd>이난아</dd></div>
+      <div><dt>리뷰일</dt><dd>2026-08-18</dd></div>
+    </dl>
+  </header>
+
+  <!-- ============ SUMMARY ============ -->
+  <div class="summary" style="grid-template-columns:repeat(3,1fr);">
+    <div class="sum-card sum-crit"><div class="n">4</div><div class="l">Critical</div><div class="d">개발 착수 전 필수 해결</div></div>
+    <div class="sum-card sum-high"><div class="n">9</div><div class="l">High</div><div class="d">개발 되물음 · QA 이슈 예상 (1건 확정 이슈로 승격)</div></div>
+    <div class="sum-card sum-med"><div class="n">12</div><div class="l">Medium</div><div class="d">문구 · 상세 스펙 보강</div></div>
+  </div>
+  <div class="verdict">
+    <b>총평</b> — 일정 설계(일요일 종료로 주간 집계 사이클 보존, 프론트/배치 종료 시점 분리, 절삭 예시 표, FAQ 선제 작성)는 방향이 정확합니다.
+    다만 <b>① 추천 점수의 주차 귀속 로직 미검증(C-2)</b>, <b>② 차감 로직 종료 시점과 어뷰징 대응의 모순(C-3)</b>,
+    <b>③ 마지막 집계 주간 전체가 추석 연휴와 겹치는 일정 리스크(H-5, 확정)</b>가 해소되기 전에는 개발요청서로 전환할 수 없습니다.
+  </div>
+
+  <!-- ============ CRITICAL ============ -->
+  <section class="sec">
+    <h2 class="sec-title t-crit"><span class="bar"></span>Critical — 이대로 진행 시 사고</h2>
+    <p class="sec-desc">공지 발행(8/24) 또는 개발 착수 전 반드시 해결. 미해결 시 대외 오안내 또는 지급 사고로 직결됩니다.</p>
+
+    <!-- C1 -->
+    <div class="issue">
+      <div class="issue-head">
+        <span class="badge b-crit">C-1</span>
+        <div class="issue-title">공지 원문의 "구매가이드 종료" 표기 — 존치 계획과 충돌<span class="ref">§6-1 공지 원문</span></div>
+      </div>
+      <div class="issue-body">
+        <span class="lbl">문제</span>
+        <div class="quotebox">공지 원문 종료 대상 : "쇼핑지식 (<b>구매가이드</b> / 사용기 / 누리라운지 / 쇼핑Q&amp;A)"</div>
+        <p>구매가이드는 플랫폼 전환 후 존치되는 서비스임. 이대로 공지가 나가면 "구매가이드도 없어진다"는 대외 오안내가 됨.</p>
+        <span class="lbl action">수정 제안</span>
+        <p>구매가이드 커뮤니티 기능(댓글·추천) 종료는 <b>확정</b>. 이에 따라 종료 대상을 "사용기 / 누리라운지 / 쇼핑Q&amp;A"로 한정하고, 구매가이드는 별도 줄로 분리하여 <b>"구매가이드는 계속 제공되며, 댓글·추천 등 커뮤니티 기능만 종료됩니다"</b>로 명시. 화면 처리 섹션의 댓글·추천 적용 영역(구매가이드 포함)과 정합 유지.</p>
+      </div>
+    </div>
+
+    <!-- C2 -->
+    <div class="issue">
+      <div class="issue-head">
+        <span class="badge b-crit">C-2</span>
+        <div class="issue-title">추천 최종 집계분(9/28 08:00)의 "주차 귀속" 로직 미검증<span class="ref">§5-2 추천 활동점수 처리</span></div>
+      </div>
+      <div class="issue-body">
+        <span class="lbl">배경</span>
+        <p>추천 점수는 글·댓글(즉시 적립)과 달리 <b>익일 08:00 배치</b>로 적립되어, 발생과 적립 사이 최대 하루의 시차가 있음. 일요일 추천 건은 항상 <b>다음 주 월요일에 적립 처리</b>되므로, 발생 주차와 적립 처리일의 주차가 어긋나는 유일한 케이스.</p>
+        <span class="lbl">문제</span>
+        <p>PRD는 9/27(일) 발생 추천이 마지막 주차(9/21~27)에 "포함"된다고 선언만 하고 있음. 이는 현행 배치가 어느 기준으로 귀속하는지에 따라 성립 여부가 갈림:</p>
+        <div class="pattern-grid">
+          <div class="pattern ok">
+            <h4>패턴 A — 발생일 기준 귀속</h4>
+            <code>{ 점수: 5P, 귀속일: 9/27(일) }</code>
+            <p>주간 집계가 "귀속일 9/21~9/27"을 합산 → 마지막 주차에 정상 포함 → 10/1 지급 ✓ 별도 조치 불필요.</p>
+          </div>
+          <div class="pattern bad">
+            <h4>패턴 B — 처리일(적립일) 기준 귀속</h4>
+            <code>{ 점수: 5P, 적립일: 9/28(월) }</code>
+            <p>9/28~10/4 주차 점수로 잡힘 → 해당 주차의 지급일(10/8)은 오지 않음(10/2 배치 종료) → <b>9/27 하루치 추천 점수 전체 증발</b> ✗</p>
+          </div>
+        </div>
+        <p>패턴 B라도 평상시엔 다음 주 지급에 이월되므로 문제가 드러나지 않음. <b>서비스 종료가 "다음 주"를 없애는 순간에만 버그가 되는 구조</b>라 개발·QA 모두 지나치기 쉬움. 게다가 공지 원문·FAQ에 "9월 27일에 받은 추천도 반영되나요? → 네"라고 이미 대외 약속이 박혀 있어, 누락 시 단순 CS가 아니라 <b>공지 위반 → 전건 수동 보상 + 정정 공지</b>까지 감.</p>
+        <span class="lbl action">액션 (순서대로)</span>
+        <ol class="steps">
+          <li><b>개발 확인 요청</b> (문안 그대로 사용 가능): "추천 점수 적립 배치가 점수를 기록할 때, 주간 집계의 귀속 기준이 되는 날짜 컬럼에 <b>추천 발생일</b>이 들어가나요, <b>배치 실행일</b>이 들어가나요? 일요일 발생 추천 건이 어느 주차 지급분에 포함되는지 확인 부탁드립니다."</li>
+          <li><b>패턴 A 확인 시</b> — PRD §5-2에 "현행 배치는 발생일 기준 귀속으로 확인됨 (확인일자 / 확인자)" 1줄 명기 후 종결.</li>
+          <li><b>패턴 B 확인 시</b> — 처리 방안 택1 확정 후 명기:
+            <br>· <b>B-1 집계 범위 확장</b>: 9/28 확정 배치의 집계 조건을 9/21~9/27 → 9/21~<b>9/28 08:30</b>으로 한시 변경해 월요일 적립분 흡수. 글·댓글은 9/27 23:59 차단이므로 이 구간엔 추천 적립분만 존재한다는 전제를 QA 항목화.
+            <br>· <b>B-2 수동 합산</b>: 9/28 배치 결과를 추출해 지급 대상 산출 시 수동 가산. 코드 무수정이나 휴먼 에러 리스크 — 담당자(김민지) 지정 및 더블체크 절차 필수.</li>
+          <li><b>QA 체크리스트 추가</b>: 스테이지에서 일요일 시각으로 추천 발생 → 월요일 배치 실행 → 직전 주차 지급 대상 금액에 포함되는지 검증. 최종 지급 정합성 QA 1순위.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- C3 -->
+    <div class="issue">
+      <div class="issue-head">
+        <span class="badge b-crit">C-3</span>
+        <div class="issue-title">점수 차감 로직 9/27 비활성화 ↔ 어뷰징 대응 수단 모순<span class="ref">§4 배치 종료 순서 주의</span></div>
+      </div>
+      <div class="issue-body">
+        <span class="lbl">문제</span>
+        <div class="quotebox">"활동점수 차감 로직(게시글 삭제 시)은 <b>9/27 적립 종료와 동시에 비활성화</b>하며…"</div>
+        <p>이 정의대로면 9/28~10/1 사이 운영자가 도배·광고글을 삭제해도 점수가 차감되지 않아, 어뷰징으로 적립된 점수가 그대로 e머니로 지급됨. 유의사항에는 "도배성 글은 적립이 제한될 수 있다"고 대외 고지해 놓고 <b>실행 수단이 없는 상태</b>.</p>
+        <span class="lbl action">확정 제안</span>
+        <p><b>자동 차감은 9/27 비활성화 유지</b>하되, <b>어드민 수동 차감 기능은 10/1 지급 배치 실행 직전까지 유지</b>. "지급 완료된 e머니는 회수하지 않음" 원칙은 그대로 유지. §4 주의 문구와 §8에 반영.</p>
+      </div>
+    </div>
+
+    <!-- C4 -->
+    <div class="issue">
+      <div class="issue-head">
+        <span class="badge b-crit">C-4</span>
+        <div class="issue-title">종료 직전 포인트 파밍(어뷰징) 대응 절차 부재<span class="ref">§5 상세 정책 전반</span></div>
+      </div>
+      <div class="issue-body">
+        <span class="lbl">문제</span>
+        <p>현금성 리워드 종료 공지(D-34) 이후 마지막 주간에 어뷰징 스파이크가 발생하는 것은 정형화된 패턴. 특히 마지막 주간에는 "다음 주 제재"라는 억지력이 사라짐. 현재 PRD에는 검수·보류·제외에 대한 절차가 전무.</p>
+        <span class="lbl action">추가할 것</span>
+        <ul class="pts">
+          <li><b>운영 검수 기간 신설</b>: 9/28(월)~9/30(수)을 지급 전 검수 기간으로 명시. 지급 대상자 산출 후 상위 적립자 N명(제안: 상위 50명 + 전주 대비 적립 3배 이상 급증자) 수동 검수.</li>
+          <li><b>지급 보류/제외 판정 기준</b>: 기존 도배·광고 정책 원용, 판정 시 해당 주차 적립분 차감(C-3의 수동 차감 경로 활용).</li>
+          <li><b>검수 담당자 지정</b> 및 판정 이력 기록 방식.</li>
+          <li><b>QA 항목</b>: 등급별 일 한도(누리그린 1,000P / 누리패밀리 3,000P / 누리VIP 5,000P)가 마지막 주에도 정상 동작하는지 검증.</li>
+        </ul>
+        <span class="lbl risk">리스크</span>
+        <p>마지막 집계 주간이 추석 연휴(H-5)와 겹쳐 운영 모니터링 공백이 예상되므로, 검수 기간·담당 확정은 더욱 필수.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HIGH ============ -->
+  <section class="sec">
+    <h2 class="sec-title t-high"><span class="bar"></span>High — 개발 되물음 · QA 이슈 예상</h2>
+    <p class="sec-desc">개발요청서 전환 전 PRD에 확정값으로 반영 필요. 미반영 시 개발 왕복 또는 QA 단계 이슈로 회귀합니다.</p>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-1</span>
+        <div class="issue-title">적립 종료 컷오프 기준 미정의<span class="ref">§4 ④ / §8</span></div></div>
+      <div class="issue-body">
+        <p>"9/27 23:59"만으로는 부족. <b>서버 시간 23:59:59 기준, 등록 API의 서버 도달 시각으로 판정</b>임을 명시할 것 (클라이언트 시간 아님).</p>
+        <span class="lbl action">경계 케이스 확정</span>
+        <p>23:58 작성 시작 → 00:00 이후 등록 클릭 → 등록 실패 처리 + 알럿 문구 확정 제안: <b>"쇼핑지식 서비스 종료로 글 등록이 마감되었습니다. 작성하신 내용은 저장되지 않으니 별도 보관해 주세요."</b> 댓글·추천도 동일 원칙 적용.</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-2</span>
+        <div class="issue-title">기존 글 수정·삭제 허용 여부 누락 (읽기 전용 기간 9/28~10/15)<span class="ref">§8</span></div></div>
+      <div class="issue-body">
+        <p>글쓰기 종료만 정의되어 있고 본인 글 <b>삭제</b> 가능 여부가 없음. 개인정보가 포함된 글의 삭제권은 열람 종료 전까지 열어둬야 함.</p>
+        <span class="lbl action">확정 제안</span>
+        <p><b>삭제는 10/15 열람 종료 전까지 허용, 수정은 9/27 이후 차단</b> (수정 허용 시 광고글 변조 리스크). 삭제 시 점수 차감은 C-3 결정에 따름(자동 차감 없음, 어뷰징 건만 수동 차감).</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-3</span>
+        <div class="issue-title">마이페이지 활동점수·등급·랭킹 화면 처리 통째로 누락<span class="ref">§8</span></div></div>
+      <div class="issue-body">
+        <ul class="pts">
+          <li>활동점수 조회 화면: 적립 내역·전환 예정 점수 표시를 언제까지, 어떻게 노출하는지 미정.</li>
+          <li>10/1 지급 후 남는 <b>5P 미만 절삭 잔여분</b>이 계속 표시되면 CS 유발 — 지급 완료 후 0P 처리 또는 "소멸" 표기 중 택1 확정 필요.</li>
+          <li>활동랭킹 페이지: 종료 시점·처리 방식(페이지 제거 vs 동결 표시) 미정.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-4</span>
+        <div class="issue-title">3차 안내 "푸시" 발송 스펙 부재<span class="ref">§4 ③</span></div></div>
+      <div class="issue-body">
+        <p>발송 대상(전체 / 최근 90일 쇼핑지식 활동자 / <b>마케팅 수신 동의자 한정 — 정보성 vs 광고성 분류에 따라 법적 필수 여부 갈림</b>), 발송 시각, 푸시 문구, 랜딩(공지 상세) 모두 미정. H-5와 연동하여 발송일 자체 재검토 필요.</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-5</span><span class="badge b-crit" style="background:#fff;color:var(--high);border:1.5px solid var(--high);">확정 이슈로 승격</span>
+        <div class="issue-title">마지막 집계 주간이 추석 연휴와 정면 충돌<span class="ref">§4 종료 일정 전체</span></div></div>
+      <div class="issue-body">
+        <span class="lbl">확인 결과 (08/18 조사)</span>
+        <p>2026년 추석 당일 <b>9/25(금)</b>, 법정 연휴 <b>9/24(목)~9/26(토)</b>, 일요일 9/27로 이어져 실질 <b>9/24~9/27 4일 연휴</b>. 대체공휴일 없음.</p>
+        <div class="tbl-wrap"><table class="mini">
+          <tr><th>PRD 일정</th><th>달력 현실</th><th>영향</th></tr>
+          <tr><td>③ 3차 안내 (D-3 배너·푸시) 9/24(목)</td><td><b>연휴 첫날 (공휴일)</b></td><td>발송 자동화 여부·당일 대응 인력 확인 필요. 연휴 중 푸시는 오픈율·민원 관점 재검토</td></tr>
+          <tr><td>마지막 집계 주간 9/21~9/27</td><td><b>후반 4일(9/24~27)이 통째로 연휴</b></td><td>운영 모니터링 공백 → 어뷰징 감시 불가 구간 (C-4와 직결). 반대로 연휴로 활동량 자체가 줄 수도 있음</td></tr>
+          <tr><td>④ 적립 종료 9/27(일) 23:59</td><td><b>연휴 마지막 날</b></td><td>장애 발생 시 당직 대응 체계 필요</td></tr>
+          <tr><td>⑤⑥ 최종 집계·확정 9/28(월)</td><td>연휴 직후 첫 영업일</td><td>담당자 출근·배치 정상 실행 확인 1순위 작업으로 지정</td></tr>
+          <tr><td>⑦⑧ 지급 10/1(목)·배치 종료 10/2(금)</td><td>평일 (단, 10/3 개천절~10/5 대체휴일 연휴 직전)</td><td>10/2에 지급 오류 발견 시 대응 시간이 반나절뿐 → H-6 조건부 종료 필요성 강화</td></tr>
+        </table></div>
+        <span class="lbl action">액션</span>
+        <p>① 3차 안내 발송일을 9/23(수, 연휴 전 마지막 영업일)로 앞당기는 안 검토. ② 연휴 기간 장애·어뷰징 대응 담당(당직) 지정. ③ 9/28 아침 배치 실행 결과 확인을 체크리스트 최상단에 배치.</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-6</span>
+        <div class="issue-title">10/2(금) 배치 종료가 무조건 실행이면 위험<span class="ref">§4 ⑧</span></div></div>
+      <div class="issue-body">
+        <p>10/1 지급 배치가 실패·부분 실패할 경우 재시도 여지가 하루뿐이고, 직후가 개천절 연휴(10/3~10/5).</p>
+        <span class="lbl action">확정 제안</span>
+        <p>"10/1 지급 결과 대사(지급 대상자 수 = 실제 지급 건수, 총 지급 e머니 합계 일치) <b>완료 확인 후</b> 배치 종료"로 조건부 전환. 대사 담당자 지정.</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-7</span>
+        <div class="issue-title">지급 누락 CS 대응 수단·기한 미정의</div></div>
+      <div class="issue-body">
+        <p>배치 종료 후 누락 건 발견 시 e머니 수동 지급 경로(어드민 기능 or e머니 운영 프로세스)와 유지 기한 필요. <b>제안: 최종 지급일 +30일(~10/31)까지 수동 지급 경로 유지</b>, CS 접수 → 적립 이력 확인 → 수동 지급 프로세스와 담당 명시.</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-8</span>
+        <div class="issue-title">회원 등급 종료의 영향도 미분석<span class="ref">§6-1 유의사항 / FAQ</span></div></div>
+      <div class="issue-body">
+        <p>누리그린/누리패밀리/누리VIP 등급이 쇼핑지식 외 다른 혜택·이벤트 응모 자격 등과 연동되어 있는지, "종료"가 <b>데이터 삭제인지 표시 제거인지</b> 미정.</p>
+        <span class="flag">확인 필요 — 등급 데이터를 참조하는 타 서비스·이벤트 유무 (개발 조회 요청)</span>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-head"><span class="badge b-high">H-9</span>
+        <div class="issue-title">공지 게시 전 법무 검토 절차 누락<span class="ref">§6 / §6-1</span></div></div>
+      <div class="issue-body">
+        <span class="lbl">문제</span>
+        <p>e머니 약관상 30일 전 공지 의무가 걸린 공지문으로, 문구 하나가 약관 위반 리스크로 직결됨. F-2(푸시 광고성 분류)·F-3(데이터 파기)·F-4(약관 개정 해당 여부)는 법무 확인 항목으로 잡혀 있는데 정작 <b>공지 원문 자체의 법무 검토 절차가 없음</b>. 검토가 늦어지면 게시일(8/24)이 밀리고, 30일 공지 의무 때문에 9/27 종료일까지 연쇄 지연되는 구조.</p>
+        <span class="lbl action">액션</span>
+        <ul class="pts">
+          <li><b>8/20(목)까지 법무 검토 요청 메일 발송</b> (게시일 8/24 역산, 회신 리드타임 확보).</li>
+          <li>검토 요청 범위: 공지 원문 전문 + FAQ + 팝업(M-12)·띠배너 문구 일체.</li>
+          <li>F-4(약관 개정 해당 여부)를 <b>같은 메일에 병합</b>하여 한 번에 회신받을 것 — 왕복 2회 방지.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MEDIUM ============ -->
+  <section class="sec">
+    <h2 class="sec-title t-med"><span class="bar"></span>Medium — 문구 · 상세 스펙 보강</h2>
+    <p class="sec-desc">V0.2에서 일괄 반영. 각 항목의 "확정 제안"을 그대로 채택해도 무방하며, 다른 값으로 확정 시 사유만 남길 것.</p>
+    <div class="tbl-wrap">
+    <table>
+      <tr><th style="width:52px;">No.</th><th style="width:180px;">항목</th><th>지적 및 확정 제안</th></tr>
+      <tr><td class="id">M-1</td><td>댓글 입력창 처리 상세</td><td>"입력창 내용"이 placeholder인지 불명확. <b>제안: 입력창 비활성(readonly) + placeholder "서비스 종료로 댓글 작성이 종료되었습니다." + [등록] 버튼 disabled.</b> 포커스 진입 불가 처리 포함.</td></tr>
+      <tr><td class="id">M-2</td><td>추천 취소 동작</td><td>추천 취소 기능 존재 시 9/27 이후 취소도 차단인지 미정의. <b>차단 권장</b> (집계 후 취소 시 점수 정합성 붕괴). 취소 시도 시 추천과 동일 알럿 노출.</td></tr>
+      <tr><td class="id">M-3</td><td>알럿 문구 톤 불일치</td><td>글쓰기만 "쇼핑지식 서비스 종료로~", 댓글·추천은 "서비스 종료로~". <b>"쇼핑지식 서비스 종료로"로 통일</b> 권장.</td></tr>
+      <tr><td class="id">M-4</td><td>FAQ 절삭 표현 혼선</td><td>"5P 단위로 전환, <b>1점 미만 절삭</b>" → 사용자 혼란 유발. <b>"5P 단위로 전환되며, 5P 미만 잔여 점수는 전환되지 않습니다"</b>로 통일.</td></tr>
+      <tr><td class="id">M-5</td><td>FAQ 추가</td><td>예상 CS 상위 질문 2건 추가: ① "제가 쓴 글을 지울 수 있나요?" (H-2 결정 반영) ② "e머니 유효기간이 있나요?" (기존 e머니 정책 안내로 연결).</td></tr>
+      <tr><td class="id">M-6</td><td>띠배너 정책</td><td>노출 기간(제안: 8/24~10/15), 닫기 버튼 유무, 닫기 시 재노출 규칙(제안: 당일 미노출, 익일 재노출) 미정.</td></tr>
+      <tr><td class="id">M-7</td><td>2차 안내 "배너 강조 노출"</td><td>무엇을 어떻게 강조하는지 스펙 없음. 띠배너 문구 교체안·색상 변경안 등 구체화 필요.</td></tr>
+      <tr><td class="id">M-8</td><td>읽기 전용 기간 기능 범위</td><td>9/28~10/15 동안 검색·신고·스크랩 등 나머지 기능의 유지/차단 목록 미정의. 기능별 O/X 표로 정리할 것.</td></tr>
+      <tr><td class="id">M-9</td><td>10/15 이후 URL 처리</td><td>열람 종료 후 URL 접근 시 처리(redirect)가 본 문서에 없음. 별도 트랙이면 <b>"URL redirect 처리는 별도 문서 참조"</b> 1줄 표기.</td></tr>
+      <tr><td class="id">M-10</td><td>데이터 보관·파기</td><td>게시물·활동점수 데이터 보관 기간, 개인정보 파기 일정 미정. <b>법무 확인 항목으로 플래그.</b></td></tr>
+      <tr><td class="id">M-11</td><td>어드민 변경사항 섹션 부재</td><td>공지 등록, 수동 차감(C-3)·수동 지급(H-7), 배치 on/off 등 어드민 측 요구사항 섹션 신설 필요.</td></tr>
+      <tr><td class="id">M-12</td><td>공지 팝업 노출 추가 <span style="font-size:11px;font-weight:800;color:var(--brand);">[추가 요청]</span></td><td>§7 공지 노출 위치에 <b>팝업(레이어) 노출 추가</b>할 것. 띠배너만으로는 리워드 지급 종료 인지가 부족함. 스펙 확정 필요: 노출 위치(쇼핑지식 메인 진입 시), 노출 기간, PC/MO 각각의 형태, "오늘 하루 보지 않기" 재노출 규칙, 닫기 시 동작, 공지 상세 랜딩 링크.</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ DEV QUESTIONS ============ -->
+  <section class="sec">
+    <h2 class="sec-title"><span class="bar"></span>개발이 되물을 지점 Top 5 — 기획서에 미리 박아둘 것</h2>
+    <div class="tbl-wrap">
+    <table>
+      <tr><th style="width:52px;">순위</th><th>예상 질문</th><th>기획서에 넣을 답</th><th style="width:80px;">연계</th></tr>
+      <tr><td><b>1</b></td><td>추천 점수 주차 귀속이 발생일 기준인가, 집계 실행일 기준인가?</td><td>착수 전 개발과 현행 로직 확인 → 확인 결과와 (패턴 B일 경우) 처리 방안을 §5-2에 명기</td><td class="id">C-2</td></tr>
+      <tr><td><b>2</b></td><td>차감 로직은 언제까지 살려두나?</td><td>"자동 차감 9/27 비활성화, 어드민 수동 차감은 10/1 지급 직전까지 유지" 확정 문구</td><td class="id">C-3</td></tr>
+      <tr><td><b>3</b></td><td>컷오프는 어떤 시간 기준인가? 경계 요청 실패 시 뭘 보여주나?</td><td>서버 시간 23:59:59, API 서버 도달 시각 기준 + 실패 알럿 문구 확정</td><td class="id">H-1</td></tr>
+      <tr><td><b>4</b></td><td>기존 글 수정·삭제는 되나?</td><td>삭제 10/15까지 허용 / 수정 9/27 차단 — 프론트 작업 범위가 달라지므로 필수</td><td class="id">H-2</td></tr>
+      <tr><td><b>5</b></td><td>10/2 배치 종료는 무조건 실행인가?</td><td>지급 대사 완료 확인 후 종료 (조건부) + 대사 담당자</td><td class="id">H-6</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ FLAGS ============ -->
+  <section class="sec">
+    <h2 class="sec-title"><span class="bar" style="background:var(--flag);"></span>확인 필요 플래그 — 기존 시스템·정책 충돌 가능성</h2>
+    <div class="tbl-wrap">
+    <table>
+      <tr><th style="width:52px;">No.</th><th>항목</th><th style="width:140px;">확인처</th><th style="width:80px;">연계</th></tr>
+      <tr><td class="id">F-1</td><td>회원 등급 데이터를 참조하는 타 서비스·이벤트 유무</td><td>개발 조회</td><td class="id">H-8</td></tr>
+      <tr><td class="id">F-2</td><td>푸시 발송의 정보성/광고성 분류 및 수신 동의 요건</td><td>법무·마케팅</td><td class="id">H-4</td></tr>
+      <tr><td class="id">F-3</td><td>게시물·개인정보 데이터 보관/파기 일정</td><td>법무</td><td class="id">M-10</td></tr>
+      <tr><td class="id">F-4</td><td>리워드 서비스 종료가 e머니 약관 개정 사항에 해당하는지 — <b>H-9 법무 검토 요청 메일에 병합</b></td><td>법무</td><td class="id">H-9</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    본 문서는 「활동점수 및 e머니 지급 종료 V0.1 (260813)」에 대한 팀 내부 리뷰 코멘트입니다. C-2는 상세 배경 설명 포함(개발 확인 요청 문안 그대로 사용 가능). 추석 연휴 일자는 2026-08-18 기준 공휴일 정보로 확인하였으며, 임시공휴일 지정 시 재검토 필요.
+  </footer>
+
+</div>
+</body>
+</html>
