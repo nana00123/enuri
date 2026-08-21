@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google 간편로그인 기획서 v0.2 검토 피드백</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#1a70dd; --brand-weak:#e8f1fd;
+  --alert:#ee2c40; --alert-weak:#fdeced;
+  --amber:#b8770a; --amber-weak:#fdf4e3;
+  --good:#1a7f4b; --good-weak:#e9f6ee;
+  --ink:#1b1d21; --ink-2:#4a4f57; --ink-3:#767b84;
+  --line:#e3e6ea; --line-2:#f1f3f5; --bg:#fbfcfd;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Malgun Gothic",sans-serif;
+  background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;letter-spacing:-0.01em;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 96px;display:grid;grid-template-columns:190px 1fr;gap:48px;align-items:start}
+
+header{grid-column:1/-1;padding:56px 0 32px;border-bottom:2px solid var(--ink)}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--brand);text-transform:uppercase;margin-bottom:12px}
+h1{font-size:30px;font-weight:800;letter-spacing:-0.03em;line-height:1.3}
+.meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--ink-3)}
+.meta b{color:var(--ink-2);font-weight:600}
+
+nav{position:sticky;top:24px;padding-top:32px}
+nav a{display:block;padding:7px 0 7px 12px;font-size:13px;color:var(--ink-3);text-decoration:none;border-left:2px solid var(--line);transition:.15s}
+nav a:hover{color:var(--brand);border-left-color:var(--brand)}
+nav .nav-h{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ink-3);padding:0 0 10px 12px;text-transform:uppercase}
+
+main{padding-top:32px;min-width:0}
+.lead{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px 24px;margin-bottom:20px;font-size:14px;color:var(--ink-2)}
+.lead strong{color:var(--ink);font-weight:700}
+
+section{margin-bottom:44px;scroll-margin-top:24px}
+.ch{display:flex;align-items:baseline;gap:12px;padding-bottom:10px;margin-bottom:20px;border-bottom:1px solid var(--ink)}
+.ch-no{font-size:12px;font-weight:800;color:#fff;background:var(--ink);padding:3px 9px;border-radius:4px;white-space:nowrap}
+.ch-no.red{background:var(--alert)}
+.ch-no.green{background:var(--good)}
+.ch h2{font-size:19px;font-weight:700;letter-spacing:-0.02em}
+
+.item{margin-bottom:26px}
+.item:last-child{margin-bottom:0}
+h3{font-size:15px;font-weight:700;margin-bottom:9px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+p{margin-bottom:9px;color:var(--ink-2)}
+p:last-child{margin-bottom:0}
+strong{color:var(--ink);font-weight:700}
+ul{margin:9px 0 9px 2px;list-style:none}
+li{position:relative;padding-left:15px;margin-bottom:6px;color:var(--ink-2)}
+li::before{content:"";position:absolute;left:0;top:11px;width:5px;height:5px;border-radius:50%;background:var(--line)}
+li:last-child{margin-bottom:0}
+
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;line-height:1.6}
+.t-block{background:var(--alert);color:#fff}
+.t-req{background:var(--brand-weak);color:var(--brand)}
+.t-chk{background:var(--amber-weak);color:var(--amber)}
+.t-ok{background:var(--good-weak);color:var(--good)}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;background:#fff}
+th,td{padding:9px 12px;text-align:left;border:1px solid var(--line);vertical-align:top}
+th{background:#f7f9fb;font-weight:700;color:var(--ink);font-size:12.5px;white-space:nowrap}
+td{color:var(--ink-2)}
+td strong{color:var(--ink)}
+.hl td{background:var(--alert-weak)}
+
+.note{border-left:3px solid var(--brand);background:#fff;padding:13px 16px;margin:14px 0;font-size:13.5px;color:var(--ink-2)}
+.note.warn{border-left-color:var(--alert)}
+.note.ok{border-left-color:var(--good)}
+.quote{background:var(--line-2);border-radius:6px;padding:12px 16px;margin:10px 0;font-size:13.5px;color:var(--ink-3);border-left:3px solid var(--line)}
+.quote b{color:var(--ink-2);font-weight:600;display:block;margin-bottom:4px;font-size:12px;letter-spacing:.02em}
+code{font-family:"SFMono-Regular",Consolas,monospace;font-size:12.5px;background:var(--line-2);padding:2px 6px;border-radius:4px;color:var(--ink)}
+
+.reply{grid-column:1/-1;background:var(--ink);color:#fff;border-radius:10px;padding:28px 32px;margin-top:16px}
+.reply h2{font-size:17px;font-weight:700;margin-bottom:6px}
+.reply .sub{font-size:13px;color:#a8aeb8;margin-bottom:18px}
+.reply ol{list-style:none;counter-reset:r;display:grid;gap:11px}
+.reply li{counter-increment:r;padding-left:32px;position:relative;color:#e6e9ed;font-size:14px}
+.reply li::before{content:counter(r);position:absolute;left:0;top:1px;width:21px;height:21px;background:var(--brand);color:#fff;border-radius:5px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.reply li b{color:#fff;font-weight:700}
+
+footer{grid-column:1/-1;margin-top:32px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);line-height:1.8}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;gap:0;padding:0 18px 64px}
+  nav{display:none}
+  header{padding:36px 0 24px}
+  h1{font-size:23px}
+  main{padding-top:24px}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  .reply{padding:22px 20px}
+}
+@media print{
+  body{background:#fff;font-size:11pt}
+  nav{display:none}
+  .wrap{grid-template-columns:1fr;max-width:100%}
+  section{break-inside:avoid}
+  .reply{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+  .reply li,.reply li b{color:var(--ink)}
+  .reply .sub{color:var(--ink-3)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">서비스기획팀 · 검토 피드백</div>
+  <h1>Google 간편로그인 기획서 v0.2 검토 피드백</h1>
+  <div class="meta">
+    <span><b>수신</b> 문영민</span>
+    <span><b>발신</b> 이난아</span>
+    <span><b>대상</b> v0.2_260813 보드 전체</span>
+    <span><b>요청</b> v0.3 반영</span>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-h">목차</div>
+  <a href="#a0">먼저</a>
+  <a href="#a1">APP 확인 사항 답변</a>
+  <a href="#a2">오픈 블로커</a>
+  <a href="#c4">4장 UI/UX</a>
+  <a href="#c5">5장 기술요구</a>
+  <a href="#c6">6장 측정 설계</a>
+  <a href="#c78">7·8장</a>
+  <a href="#reply">회신 요청</a>
+</nav>
+
+<main>
+
+<!-- ===== 총평 ===== -->
+<section id="a0">
+  <div class="lead">
+    보드 전체를 확인했습니다. <strong>0.2-2(로그인 수단 추가)와 3.2는 특히 잘 정리됐습니다.</strong> 계정 통합(Merge)과 로그인 수단 추가(Link)를 분리하고, 자산 이동이 없으므로 CI 대조가 불필요하다는 논리는 타당합니다. 이 구조를 전제로 아래를 보완해주세요.
+  </div>
+  <div class="note warn">
+    <strong>가장 급한 건은 5.1 Redirect URI입니다.</strong> MW 도메인이 누락되어 있어 이대로 개발이 들어가면 MW에서 로그인이 전량 실패합니다. 다른 항목보다 먼저 확인해주세요.
+  </div>
+</section>
+
+<!-- ===== APP 확인 답변 ===== -->
+<section id="a1">
+  <div class="ch"><span class="ch-no green">답변</span><h2>5.2 APP 처리 방침 — 확인 사항 ①② 회신</h2></div>
+
+  <div class="quote">
+    <b>기획서 원문 (5.2 「APP 처리 방침 — 개발 확인 필요」)</b>
+    확인 사항 ① 에누리 앱 로그인 화면이 웹뷰 기반인지 여부<br>
+    확인 사항 ② 웹뷰 기반일 경우 앱에서 Google 버튼을 미노출 처리할 수 있는지 (MW와 화면을 공유하는 경우 분기 필요)
+  </div>
+
+  <p>두 건 모두 확인했습니다. 아래를 전제로 v0.3을 작성해주세요.</p>
+
+  <table>
+    <thead><tr><th>확인 사항</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td>① 앱 로그인 화면이 웹뷰 기반인가</td><td><strong>예.</strong> MW 로그인 페이지를 그대로 사용합니다.</td></tr>
+      <tr><td>② 앱에서 버튼 미노출 처리가 가능한가</td><td><strong>가능합니다.</strong> 앱 웹뷰 UA에 에누리 <strong>식별자와 버전 정보가 모두 포함</strong>되어 있어, MW 단독으로 분기할 수 있습니다. 앱 배포 불필요합니다.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 분기 규칙 — 앱 버전까지 판별</h3>
+    <p>단순히 "앱이면 미노출"로 두면 안 됩니다. 향후 앱에 Google 로그인을 지원하더라도 <strong>미업데이트 구버전 앱에서는 버튼이 그대로 보이고 403이 발생</strong>하기 때문입니다. 처음부터 버전 조건을 넣어주세요.</p>
+    <table>
+      <thead><tr><th>조건</th><th>Google 버튼</th></tr></thead>
+      <tbody>
+        <tr><td>앱 웹뷰 + 지원 버전 이상</td><td>노출</td></tr>
+        <tr class="hl"><td>앱 웹뷰 + 미만 버전</td><td><strong>미노출</strong></td></tr>
+        <tr><td>타사 인앱브라우저(카톡·인스타 등)</td><td>노출 (403 감수, 안내 UI는 1차 제외)</td></tr>
+        <tr><td>시스템 브라우저</td><td>노출</td></tr>
+      </tbody>
+    </table>
+    <p><strong>분기 기준 버전은 하드코딩하지 말고 운영에서 변경 가능한 설정값으로</strong> 처리해주세요. 앱 릴리즈마다 MW를 재배포하면 일정이 묶입니다.</p>
+    <p>타사 인앱브라우저는 1차에서 버튼을 유지하되, 기획서에 한 줄만 명시해주세요 — <em>"인앱 브라우저 환경에서는 Google 로그인이 제한되며 카카오·네이버·Apple·이메일 로그인으로 이용 가능."</em></p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-chk">확인</span> 앱 Google 로그인 지원 — 2차 검토</h3>
+    <p>4.3 벤치마킹에 지마켓이 MW 기준으로만 정리돼 있는데, <strong>지마켓 iOS 앱은 네이티브 인증 세션(ASWebAuthenticationSession)으로 앱에서도 Google 로그인을 지원</strong>합니다(캡처 별첨). 웹뷰 안에서 처리하는 게 아니라 웹뷰 밖의 인증 세션을 호출하는 구조입니다.</p>
+    <p>앱팀에 <strong>웹뷰↔네이티브 브리지 신규 구축 공수</strong>를 문의해주세요. 2주 이내면 1차 범위에 앱을 포함하겠습니다. 앱 사용자를 측정 모수에서 빼면 다나와 확산 판단의 대표성이 약해집니다.</p>
+  </div>
+</section>
+
+<!-- ===== 블로커 ===== -->
+<section id="a2">
+  <div class="ch"><span class="ch-no red">블로커</span><h2>5.1 Redirect URI — MW 도메인 누락</h2></div>
+  <div class="quote">
+    <b>기획서 원문 (5.1)</b>
+    Redirect URI · https://www.enuri.com/auth/google/callback (Google Console 사전 등록 필수)
+  </div>
+  <p><strong>PC 도메인만 등록돼 있습니다.</strong> MW가 명시적 범위인데 <code>m.enuri.com</code> 콜백이 빠졌습니다. 이 상태로 개발이 들어가면 MW에서 <code>redirect_uri_mismatch</code>로 로그인이 전량 실패합니다.</p>
+  <ul>
+    <li>PC · MW 도메인을 모두 Google Console에 등록하고, 기획서에 둘 다 명시</li>
+    <li>개발계 · 스테이징 도메인도 함께 등록해야 QA가 가능합니다. 등록 대상 목록을 표로 정리해주세요.</li>
+  </ul>
+</section>
+
+<!-- ===== 4장 ===== -->
+<section id="c4">
+  <div class="ch"><span class="ch-no">4장</span><h2>UI/UX 요구사항</h2></div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 4.1 — 앱 분기가 4장에 없습니다</h3>
+    <p>앱 미노출 방침은 5.2에만 있고, 4.1 화면별 적용 위치 표에는 앱 분기가 없습니다. <strong>개발자는 4장을 보고 화면을 만듭니다.</strong> 위 분기 규칙 표를 4.1에 행으로 추가해주세요.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-chk">확인</span> 4.1 — 로그인 바텀시트의 앱 노출 여부</h3>
+    <p>미션적립 등에서 뜨는 로그인 바텀시트도 앱에서 동일하게 노출된다면 여기에도 같은 분기가 필요합니다. 적용 대상인지 확인해주세요.</p>
+  </div>
+
+  <div class="item">
+    <h3>4.1 — 용어 통일</h3>
+    <p>4장은 <code>PC/MO</code>, 6장은 <code>PC/MW</code>로 표기가 다릅니다. <strong><code>MW</code>로 통일</strong>해주세요. 개발·데이터 요청 시 혼선이 생깁니다.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-block">최우선</span> 4.x — One Tap과 하단 플로팅 요소 충돌 (신규 항목)</h3>
+    <p>MW에서 One Tap은 <strong>화면 하단 시트형</strong>으로 노출됩니다. Google 문서는 아래를 명시하고 있습니다.</p>
+    <ul>
+      <li>페이지 z-index를 확인해 One Tap이 다른 콘텐츠에 가려지지 않게 해야 하며, <strong>테두리의 단 1픽셀만 가려져도 UX 플로우 변경이 트리거</strong>됩니다.</li>
+      <li>One Tap 내용을 가리거나 Google iframe이라는 인식을 흐리게 하면 <strong>프로젝트 또는 계정 정지</strong>로 이어질 수 있습니다.</li>
+    </ul>
+    <p>에누리 MW 하단에는 인터넷 가입비교 플로팅 배너 등 고정 요소가 있습니다. <strong>UX 문제를 넘어 계정 정지 리스크</strong>이므로 반드시 정의가 필요합니다.</p>
+    <ul>
+      <li>MW 하단 고정 · 플로팅 요소를 <strong>목록화</strong></li>
+      <li>One Tap 노출 시 처리 방식 확정 — 숨김 또는 z-index 하향</li>
+      <li>퍼블리셔 확인 항목으로 정리 (기존 컴포넌트 수정 범위이므로 디자인 요청 불필요)</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <h3>4.3 — 지마켓 항목 보완</h3>
+    <p>현재 MW 기준으로만 조사돼 있습니다. <strong>앱에서도 Google 로그인을 지원</strong>한다는 내용을 추가하면 2차 앱 적용의 근거가 됩니다.</p>
+  </div>
+</section>
+
+<!-- ===== 5장 ===== -->
+<section id="c5">
+  <div class="ch"><span class="ch-no">5장</span><h2>기술 요구사항</h2></div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 5.1 — iOS는 버튼 플로우가 다릅니다 (redirect mode 강제)</h3>
+    <p>현재 5.1은 OAuth 방식을 단일 플로우로 기술하고 있는데, <strong>Google 공식 문서상 iOS는 ITP 때문에 popup이 아닌 redirect 방식이 필요</strong>합니다. One Tap의 iOS 제약(5.2.5)은 이미 반영돼 있으나, <strong>버튼 플로우의 iOS 분기는 누락</strong>돼 있습니다.</p>
+    <table>
+      <thead><tr><th>환경</th><th>버튼 플로우</th></tr></thead>
+      <tbody>
+        <tr><td>PC · MW-Android</td><td>popup</td></tr>
+        <tr class="hl"><td>MW-iOS</td><td><strong>redirect 필수</strong></td></tr>
+      </tbody>
+    </table>
+    <p>redirect는 페이지를 떠났다 돌아오므로 <strong>returnUrl(원래 보던 상품 페이지) 보존 방식</strong>을 명시해야 합니다. 5.1에 이미 <code>state</code> 파라미터가 CSRF 방지용으로 정의돼 있으니, 여기에 returnUrl을 함께 실으면 됩니다. <strong>오픈 리다이렉트 방지를 위한 화이트리스트 검증</strong>을 반드시 포함해주세요.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 5.2 — FedCM 관련 제약 추가</h3>
+    <p>5.3 참고자료에 FedCM 마이그레이션 가이드가 링크돼 있으나 본문에 반영되지 않았습니다.</p>
+    <ul>
+      <li>FedCM은 <strong>2025년 8월부터 One Tap · 로그인 버튼 전 구현에 의무 적용</strong>됩니다. 선택이 아닙니다.</li>
+      <li>FedCM 전환 시 <strong>One Tap의 노출 여부·스킵 사유 조회 API가 제거</strong>됩니다. 5.2 "노출 건수 수집 불가" 전제가 여기서 확정되므로, 근거를 본문에 명시해주세요.</li>
+      <li>Safari는 FedCM을 지원하지 않습니다. 5.2.5의 "iOS 사파리 대부분 미노출"과 같은 얘기이나, <strong>원인이 ITP만이 아니라 FedCM 미지원</strong>이라는 점을 함께 기재해주세요.</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 5.2.5 — 채널별 노출 형태 표 수정 (2건)</h3>
+
+    <p><strong>① iOS는 "대부분 미노출"이 아니라 <code>itp_support</code> 설정에 따라 달라집니다.</strong></p>
+    <div class="quote">
+      <b>기획서 원문 (5.2.5)</b>
+      iOS 사파리 — 대부분 미노출 — 추적 방지 정책으로 노출 제한
+    </div>
+    <p>ITP 브라우저에서는 One Tap이 <strong>다른 UX로 제공</strong>됩니다. 웰컴 페이지로 시작해 로그인용 팝업을 여는 방식이며, <code>data-itp_support</code> 속성으로 제어합니다. <strong>Google 기본값은 <code>false</code></strong>이므로, 기획서에 명시하지 않으면 개발이 기본값으로 두고 iOS에서 실제로 아무것도 뜨지 않습니다. 결과는 같지만 원인이 "정책적 제한"이 아니라 "설정 누락"입니다.</p>
+    <table>
+      <thead><tr><th>itp_support</th><th>iOS 동작</th><th>영향</th></tr></thead>
+      <tbody>
+        <tr><td><code>false</code> (기본값)</td><td>미노출</td><td>안드로이드에만 효과. iOS는 버튼 플로우로만</td></tr>
+        <tr><td><code>true</code></td><td>웰컴 페이지 → 팝업 (다단계)</td><td>노출되나 "원탭"이 아니며 전환율 낮음</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <strong>1차는 <code>itp_support = false</code>로 확정합니다.</strong> iOS는 버튼 플로우가 이미 redirect 강제라 변수가 많은데, One Tap까지 별도 UX를 얹으면 실패 원인 분해가 불가능해집니다. 안드로이드 성과를 먼저 깨끗하게 확인한 뒤 2차에서 판단하겠습니다. 이 값을 5.2.6 구현 방식에 명시해주세요.
+    </div>
+
+    <p><strong>② iOS는 브라우저와 무관하게 동일합니다.</strong> 표에 "iOS 사파리"만 있는데, ITP 대상은 iOS의 크롬 · 사파리와 파이어폭스입니다. iOS는 모든 브라우저가 WebKit 기반이라 크롬 · 웨일 · 네이버앱 브라우저 전부 같은 제약을 받습니다. 현재 표기는 <strong>"iOS 크롬은 되겠지"라는 오해</strong>를 부릅니다. 표를 브라우저 기준이 아니라 <strong>OS 기준</strong>으로 다시 정리해주세요.</p>
+
+    <table>
+      <thead><tr><th>환경</th><th>노출</th><th>형태 · 비고</th></tr></thead>
+      <tbody>
+        <tr><td>PC 크롬 · 엣지</td><td>노출</td><td>우측 상단 카드형. FedCM 경로</td></tr>
+        <tr><td><strong>AOS 크롬</strong></td><td><strong>노출</strong></td><td>하단 시트형. 기기 계정 연동으로 조건 충족률 높음 — <strong>핵심 채널</strong></td></tr>
+        <tr><td>AOS 삼성인터넷</td><td>제한적</td><td>버전에 따라 상이, QA 필요</td></tr>
+        <tr class="hl"><td><strong>iOS 전체</strong> (사파리 · 크롬 · 웨일 등)</td><td><code>itp_support</code>에 따름</td><td>WebKit 기반이라 브라우저 무관 동일. <strong>1차 <code>false</code> 적용 → 미노출</strong></td></tr>
+        <tr><td>파이어폭스 (PC · MW)</td><td><code>itp_support</code>에 따름</td><td>iOS와 동일</td></tr>
+        <tr><td>타사 인앱브라우저</td><td>미노출</td><td>웹뷰 OAuth 차단</td></tr>
+        <tr><td>에누리 APP 웹뷰</td><td>미노출</td><td>동일</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="item">
+    <h3>5.2 — 앱 브리지 방식 (2차 범위 명시)</h3>
+    <ul>
+      <li>iOS: ASWebAuthenticationSession / AOS: Chrome Custom Tabs</li>
+      <li>인증 완료 후 웹뷰로의 세션 반환 방식(딥링크 + 일회성 토큰 교환) 정의 필요</li>
+      <li><strong>UA 변조를 통한 웹뷰 우회는 Google 정책 위반</strong>이므로 검토 대상에서 제외합니다. 개발이 제안하더라도 반려해주세요.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== 6장 ===== -->
+<section id="c6">
+  <div class="ch"><span class="ch-no">6장</span><h2>사용률 측정 설계</h2></div>
+
+  <div class="note warn">
+    이 장의 산출물이 <strong>다나와 확산 판단의 근거</strong>가 됩니다. 숫자가 한 번 왜곡되면 되돌릴 수 없으므로 아래 ①②를 우선 처리해주세요.
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-block">최우선</span> ① 이용 비중 산식의 분자·분모가 맞지 않습니다</h3>
+    <p>6.4의 <code>Google 이용 비중 = Google 로그인 성공 ÷ 전체 로그인 성공</code>에서 두 값의 출처와 수단 집합이 다릅니다.</p>
+    <table>
+      <thead><tr><th>값</th><th>출처</th><th>포함 수단</th></tr></thead>
+      <tbody>
+        <tr><td>수단별 성공 (분자)</td><td>개별로그 · UXLOG</td><td>6.1 기준 4종 (애플 없음)</td></tr>
+        <tr class="hl"><td>전체 로그인 성공 (분모)</td><td>서버</td><td><strong>애플 포함</strong></td></tr>
+      </tbody>
+    </table>
+    <p><strong>MW에는 애플 로그인이 노출되고 있습니다(PC에는 없음).</strong> 분모에만 애플이 들어가면 Google 비중이 실제보다 낮게 산출됩니다. 아래를 확정해주세요.</p>
+    <ul>
+      <li><strong>6.1 측정 기준의 수단 목록에 애플 추가</strong> (MW 한정)</li>
+      <li><strong>채널별로 분모를 분리 정의</strong> — PC: 자체/카카오/네이버/Google · MW: 자체/카카오/네이버/<strong>애플</strong>/Google</li>
+      <li>PC+MW 단순 합산 금지. 합산치를 병기할 경우 분모 구성이 다르다는 각주 필수</li>
+      <li><strong>(확인) MW 애플 로그인의 로그 코드가 발급돼 있는지</strong> — 없으면 오픈 전 발급 필요</li>
+      <li>분자·분모를 <strong>같은 소스로 통일</strong>해주세요. 시도는 화면 로그가 맞지만, 비중은 성공 기준이므로 양쪽 다 서버 로그로 산출하는 편이 안전합니다.</li>
+    </ul>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-block">최우선</span> ② 처리 결과에 "자동 연결(최초)"이 없습니다</h3>
+    <p>6.2 ②의 결과 구분은 <code>기존 계정 로그인 / 신규 가입 / 계정 연동·통합 / 실패·이탈</code> 4종인데, <strong>0.2-2에서 정의한 Link(로그인 수단 추가)가 어디에도 없습니다.</strong> 현재 구조라면 "기존 계정 로그인"에 묻힙니다.</p>
+    <p>Link와 Merge를 구분한 것이 이번 기획의 핵심인데 측정에서 합쳐지면 그 성과를 보여줄 수 없습니다. <strong>이게 다나와 보고의 핵심 지표입니다.</strong></p>
+    <table>
+      <thead><tr><th>결과 구분</th><th>기준</th></tr></thead>
+      <tbody>
+        <tr><td>기존 계정 로그인</td><td>이미 연결된 Google Sub ID로 재로그인</td></tr>
+        <tr class="hl"><td><strong>자동 연결 (최초)</strong></td><td><strong>플로우 B — 이메일 일치로 기존 계정에 Google 수단이 최초 연결된 건 (신규)</strong></td></tr>
+        <tr><td>신규 가입</td><td>신규 회원번호 생성 (플로우 A)</td></tr>
+        <tr><td>계정 연동 · 통합</td><td>본인인증 · CI 확인 후 Merge (플로우 C)</td></tr>
+        <tr><td>실패 · 이탈</td><td>아래 ③ 사유 코드로 세분</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> ③ 실패 사유 코드가 없습니다</h3>
+    <p>6.2 ③ 서버 로그 필드에 "처리 결과"만 있고 실패 사유가 없습니다. 사유를 못 나누면 <strong>우리 장애와 정상 이탈을 구분할 수 없습니다.</strong> 아래로 확정해주세요.</p>
+    <table>
+      <thead><tr><th>코드</th><th>사유</th><th>우리 책임</th></tr></thead>
+      <tbody>
+        <tr><td><code>E01</code></td><td>인앱 차단 (disallowed_useragent)</td><td>N</td></tr>
+        <tr><td><code>E02</code></td><td>email_verified = false</td><td>N</td></tr>
+        <tr><td><code>E03</code></td><td>미지원 브라우저 버전</td><td>N</td></tr>
+        <tr><td><code>E04</code></td><td>사용자 취소 (계정 선택 이탈)</td><td>N</td></tr>
+        <tr><td><code>E05</code></td><td>계정 상태 예외 — 탈퇴 · 이용정지 · 휴면 (3.2.2 연계)</td><td>Y</td></tr>
+        <tr><td><code>E06</code></td><td>토큰 검증 · CI 조회 실패</td><td>Y</td></tr>
+        <tr><td><code>E07</code></td><td>타임아웃</td><td>Y</td></tr>
+        <tr><td><code>E99</code></td><td>기타</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p>E03 관련: Google GIS 라이브러리는 <strong>각 브라우저 최신 2개 버전만 지원</strong>합니다. 우리 장애가 아니므로 분리해야 합니다.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> ④ 측정 축 확장</h3>
+    <p>현재 6.1은 <code>수단 × 채널(PC/MW)</code>뿐입니다. 아래 축이 없으면 실패 원인을 분해할 수 없습니다.</p>
+    <table>
+      <thead><tr><th>추가 축</th><th>값</th><th>필요 이유</th></tr></thead>
+      <tbody>
+        <tr><td><code>os</code></td><td>iOS / AOS / 기타</td><td>iOS는 redirect 방식이라 실패 양상이 다름</td></tr>
+        <tr><td><code>browser_env</code></td><td>system / app_webview / inapp</td><td>차단 환경 건을 분모에서 제외해야 함</td></tr>
+        <tr><td><code>app_version</code></td><td>앱 웹뷰인 경우</td><td>버튼 노출 버전과 미노출 버전이 섞이면 전환율 왜곡</td></tr>
+      </tbody>
+    </table>
+    <p>세 값 모두 UA 파싱으로 취득 가능하며, 앱 웹뷰 판별 로직을 그대로 재사용하면 됩니다. <strong>타사 인앱 및 구버전 앱 건은 Google 시도→성공 전환율 산출 시 분모에서 제외</strong>합니다.</p>
+    <p><code>os</code> 축은 One Tap 때문에도 필요합니다. <code>itp_support = false</code> 적용 시 <strong>iOS에서는 One Tap이 구조적으로 0건</strong>이므로, OS를 나누지 않으면 One Tap 성과가 실제보다 낮게 보입니다. 6.4 One Tap 관련 지표는 <strong>AOS · PC 기준으로만 산출</strong>한다고 명시해주세요.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> ⑤ 콜백 도달 건수 로깅</h3>
+    <p>Google 화면에서의 이탈과 에누리 처리 실패를 구분하려면 콜백 도달 시점 로그가 필요합니다. <strong>iOS redirect 방식에서는 이 로그가 없으면 실패율 자체를 볼 수 없습니다.</strong></p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-chk">확인</span> ⑥ 6.5 ~ 6.8 섹션이 보드에 없습니다</h3>
+    <p>6장은 6.1~6.4에서 끝나는데, 두 군데에서 뒤 섹션을 참조하고 있습니다.</p>
+    <ul>
+      <li><strong>4.2 콜아웃</strong> — "측정 관련 제약은 <strong>6.7</strong>에 별도 정리되어 있습니다"</li>
+      <li><strong>8장 마케팅팀</strong> — "→ <strong>6.8</strong> 리포트 제공 항목 반영"</li>
+    </ul>
+    <p>One Tap 별도 보드에 들어가 있다면 참조 표기를 보드명까지 포함해 수정해주시고, 아직 작성 전이라면 v0.3에 포함해주세요.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> ⑦ 6.3 Baseline · 집계 주기 확정</h3>
+    <p>현재 "기간은 개발 착수 후 설정"으로 열려 있습니다. 아래로 확정해주세요.</p>
+    <table>
+      <thead><tr><th>구간</th><th>기간</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>Baseline</td><td>오픈 전 <strong>4주</strong></td><td>대형 프로모션 주간 포함 시 해당 주 제외 후 연장</td></tr>
+        <tr><td>안정화</td><td>오픈 후 2주</td><td><strong>측정 제외</strong> (신기능 호기심 클릭 배제)</td></tr>
+        <tr><td>측정</td><td>오픈 후 3~6주차 4주</td><td>이 구간으로 판정</td></tr>
+      </tbody>
+    </table>
+    <p>집계 주기: <strong>일 단위 적재 / 주 단위 리포트 / 4주 단위 판정</strong></p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-chk">확인</span> ⑧ 1.3 "CS 문의 -30% 이상 감소 목표"의 근거</h3>
+    <p>기획서 내 유일한 정량 목표인데 산출 근거가 없습니다. 현재 로그인 관련 CS 건수 실측치가 있어야 검증 가능합니다. 근거가 없다면 <strong>목표 수치를 빼고 정성 기대효과로 옮기는 편</strong>이 낫습니다. 보고 자리에서 반드시 되물어집니다.</p>
+    <p>※ 다나와 확산 판단용 목표치는 이소영 님과 협의 후 별도로 전달하겠습니다. v0.3에는 넣지 마세요.</p>
+  </div>
+</section>
+
+<!-- ===== 7·8장 ===== -->
+<section id="c78">
+  <div class="ch"><span class="ch-no">7·8장</span><h2>법적 검토 · 부서 협의</h2></div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 7장 — 탈퇴 시 Google 연결 해제(토큰 revoke)</h3>
+    <p>개인정보위가 2025년 소셜로그인 실태점검에서 <strong>탈퇴자 토큰 미폐기</strong> 건을 개선권고했습니다. 현재 7장에 해당 항목이 없습니다. 추가하고 법무 검토 대상에 포함해주세요.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 7장 — 만 14세 미만 확인 절차</h3>
+    <p>3.1.1에서 "약관 동의 · 만 14세 확인은 에누리 자체 화면에서 수집"이라고 정의했으나, <strong>7장 법적 검토에는 이 내용이 없습니다.</strong> 만 14세 미만인 경우의 처리(가입 차단 / 법정대리인 동의)도 정의되어 있지 않습니다. 3.1의 플로우 A 5단계에도 분기가 필요합니다.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-chk">확인</span> 0.2-2 · 3.2 — 자동 연결 전제의 사각지대</h3>
+    <div class="quote">
+      <b>기획서 원문 (0.2-2 적용 원칙)</b>
+      에누리는 이메일 변경 시 재인증을 수행하므로 DB에 저장된 이메일도 검증된 값입니다.
+    </div>
+    <p>논리 자체는 타당하나, 이 전제는 <strong>재인증 정책 도입 이후에 가입·변경된 계정에만 성립</strong>합니다. 정책 이전에 가입했거나 이메일 인증 없이 가입 가능했던 시기의 계정이 남아 있다면, 그 계정들이 자동 연결의 취약 지점이 됩니다.</p>
+    <p><strong>미인증 이메일 보유 계정의 존재 여부와 규모</strong>를 확인해주세요. 존재한다면 해당 계정은 자동 연결 대상에서 제외하고 수동 인증을 경유시켜야 합니다.</p>
+  </div>
+
+  <div class="item">
+    <h3><span class="tag t-req">필수</span> 8장 — 개발팀 · 앱팀 누락</h3>
+    <p>5.2에서 "개발 확인 필요"라고 해놓고 협의 대상은 법무 · 마케팅 · PC사업팀뿐입니다. 아래를 추가해주세요.</p>
+    <table>
+      <thead><tr><th>부서</th><th>협의 내용</th></tr></thead>
+      <tbody>
+        <tr><td>개발팀</td><td>Redirect URI 등록(PC · MW · 개발계), 앱 웹뷰 UA 분기, 실패 사유 코드 적재</td></tr>
+        <tr><td>앱팀</td><td>웹뷰↔네이티브 브리지 공수 검토 (2차)</td></tr>
+        <tr><td>데이터 담당</td><td>MW 애플 로그 코드 확인 및 발급</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<div class="reply" id="reply">
+  <h2>회신 요청</h2>
+  <div class="sub">위에서부터 순서대로 확인 부탁드립니다.</div>
+  <ol>
+    <li><b>5.1 Redirect URI</b> — MW 도메인 누락 확인 및 등록 대상 목록 (오픈 블로커)</li>
+    <li><b>MW 애플 로그 코드</b> 발급 여부 — 6장 분모 정의에 필요</li>
+    <li><b>앱팀 브리지 공수</b> — 앱의 1차 포함 여부를 이걸로 결정합니다</li>
+    <li><b>MW 하단 플로팅 요소 목록</b> — One Tap 충돌 처리 정의에 필요 (계정 정지 리스크)</li>
+    <li><b>6.7 / 6.8</b> — One Tap 별도 보드에 있는지, 미작성인지</li>
+    <li><b>미인증 이메일 보유 계정</b>의 존재 여부와 규모</li>
+  </ol>
+</div>
+
+<footer>
+  Google 간편로그인 기획서 v0.2 검토 피드백 · 서비스기획팀 이난아<br>
+  다나와 확산 판단용 사용률 목표치는 협의 후 별도 전달 예정
+</footer>
+
+</div>
+</body>
+</html>
